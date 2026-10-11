@@ -31,13 +31,13 @@
        ========================================================================== */
     :root {
       --bg-dark: #070e17;
-      --card-bg: rgba(13, 25, 39, 0.82);
+      --card-bg: rgba(13, 25, 39, 0.84);
       --card-border: rgba(148, 163, 184, 0.14);
       --accent-water: #38bdf8;
       --accent-water-glow: rgba(56, 189, 248, 0.22);
       --accent-clover: #10b981;
       --accent-clover-light: #34d399;
-      --accent-clover-glow: rgba(16, 185, 129, 0.22);
+      --accent-clover-glow: rgba(16, 185, 129, 0.24);
       --accent-silver: #e2e8f0;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
@@ -66,7 +66,7 @@
     }
 
     body {
-      padding: max(env(safe-area-inset-top), 16px) 14px max(env(safe-area-inset-bottom), 28px) 14px;
+      padding: max(env(safe-area-inset-top), 14px) 12px max(env(safe-area-inset-bottom), 28px) 12px;
       display: flex;
       justify-content: center;
     }
@@ -76,7 +76,7 @@
       max-width: 800px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
 
     /* Header */
@@ -86,37 +86,37 @@
       -webkit-backdrop-filter: blur(18px);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 18px 20px;
+      padding: 16px 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     }
 
     .header-title h1 {
-      font-size: 20px;
+      font-size: 19.5px;
       font-weight: 800;
       letter-spacing: -0.4px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       background: linear-gradient(135deg, #ffffff 15%, #38bdf8 55%, #34d399 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .header-title p {
-      font-size: 12px;
+      font-size: 11.5px;
       color: var(--text-muted);
-      margin-top: 3px;
+      margin-top: 2px;
     }
 
     .header-badges {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
       flex-wrap: wrap;
     }
 
@@ -124,36 +124,29 @@
       background: rgba(56, 189, 248, 0.12);
       border: 1px solid rgba(56, 189, 248, 0.32);
       color: var(--accent-water);
-      padding: 6px 12px;
+      padding: 5px 11px;
       border-radius: 999px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 5px;
       text-decoration: none;
-      transition: all 0.2s ease;
     }
 
     .badge-sync {
       background: rgba(16, 185, 129, 0.14);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: var(--accent-clover-light);
-      padding: 6px 12px;
+      padding: 5px 11px;
       border-radius: 999px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       cursor: pointer;
       user-select: none;
-    }
-
-    .badge-sync.unauthed {
-      background: rgba(226, 232, 240, 0.09);
-      border-color: rgba(226, 232, 240, 0.28);
-      color: var(--accent-silver);
     }
 
     .sync-dot {
@@ -164,52 +157,54 @@
       box-shadow: 0 0 8px var(--accent-clover-light);
     }
 
-    .badge-sync.unauthed .sync-dot {
-      background: var(--accent-silver);
-      box-shadow: none;
-    }
-
     .badge-streak {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(56, 189, 248, 0.16));
-      border: 1px solid rgba(52, 211, 153, 0.35);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.18), rgba(56, 189, 248, 0.18));
+      border: 1px solid rgba(52, 211, 153, 0.4);
       color: #a7f3d0;
-      padding: 6px 12px;
+      padding: 5px 11px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
     }
 
-    /* Date & Schedule Banner */
-    .date-bar {
+    /* ==========================================================================
+       COMPACT 7-DAY WEEK STRIP (THANH LỊCH TUẦN GIỮ CHUỖI)
+       ========================================================================== */
+    .week-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 12px 16px;
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .week-top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
-      gap: 10px;
     }
 
     .date-nav {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .nav-btn {
       background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--card-border);
       color: var(--text-main);
-      padding: 6px 11px;
-      border-radius: 8px;
-      font-size: 12px;
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 11.5px;
       font-weight: 600;
       cursor: pointer;
     }
@@ -222,8 +217,98 @@
 
     .current-date-text {
       font-weight: 700;
-      font-size: 13.5px;
+      font-size: 13px;
       color: #fff;
+    }
+
+    .week-strip {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      width: 100%;
+    }
+
+    .day-pill {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 12px;
+      padding: 7px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      user-select: none;
+    }
+
+    .day-pill:hover {
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    /* Ngày đang chọn xem */
+    .day-pill.is-selected {
+      border-color: var(--accent-water);
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+
+    /* Ngày hôm nay */
+    .day-pill.is-today .day-name {
+      color: var(--accent-water);
+      font-weight: 800;
+    }
+
+    /* Ngày đã giữ chuỗi (có hoàn thành ít nhất 1 việc) */
+    .day-pill.streak-partial {
+      background: rgba(56, 189, 248, 0.09);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    /* Ngày hoàn thành xuất sắc 100% */
+    .day-pill.streak-full {
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 100%);
+      border-color: rgba(52, 211, 153, 0.5);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
+    }
+
+    .day-name {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .day-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .day-status-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-dim);
+    }
+
+    .day-pill.streak-partial .day-status-icon {
+      background: rgba(56, 189, 248, 0.2);
+      color: var(--accent-water);
+      font-weight: 800;
+    }
+
+    .day-pill.streak-full .day-status-icon {
+      background: rgba(16, 185, 129, 0.25);
+      color: var(--accent-clover-light);
     }
 
     .schedule-pill {
@@ -232,23 +317,24 @@
       padding: 6px 12px;
       border-radius: 10px;
       line-height: 1.35;
+      text-align: center;
     }
 
     .schedule-free {
-      background: rgba(16, 185, 129, 0.15);
+      background: rgba(16, 185, 129, 0.14);
       border: 1px solid rgba(16, 185, 129, 0.35);
       color: var(--accent-clover-light);
     }
 
     .schedule-evening {
-      background: rgba(56, 189, 248, 0.14);
+      background: rgba(56, 189, 248, 0.13);
       border: 1px solid rgba(56, 189, 248, 0.32);
       color: var(--accent-water);
     }
 
     .schedule-weekend {
-      background: rgba(226, 232, 240, 0.1);
-      border: 1px solid rgba(226, 232, 240, 0.25);
+      background: rgba(226, 232, 240, 0.09);
+      border: 1px solid rgba(226, 232, 240, 0.24);
       color: var(--accent-silver);
     }
 
@@ -256,14 +342,14 @@
     .mode-selector {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 10px;
     }
 
     .mode-btn {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 14px 16px;
+      padding: 12px 14px;
       cursor: pointer;
       text-align: left;
       transition: all 0.2s ease;
@@ -272,34 +358,34 @@
     .mode-btn.active-standard {
       background: rgba(56, 189, 248, 0.13);
       border-color: var(--accent-water);
-      box-shadow: 0 0 20px var(--accent-water-glow);
+      box-shadow: 0 0 18px var(--accent-water-glow);
     }
 
     .mode-btn.active-light {
       background: rgba(16, 185, 129, 0.13);
       border-color: var(--accent-clover-light);
-      box-shadow: 0 0 20px var(--accent-clover-glow);
+      box-shadow: 0 0 18px var(--accent-clover-glow);
     }
 
     .mode-tag {
-      font-size: 10.5px;
+      font-size: 10px;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .mode-name {
-      font-size: 14.5px;
+      font-size: 14px;
       font-weight: 700;
       color: #fff;
     }
 
     .mode-desc {
-      font-size: 11.5px;
+      font-size: 11px;
       color: var(--text-muted);
-      margin-top: 3px;
+      margin-top: 2px;
       line-height: 1.35;
     }
 
@@ -308,17 +394,17 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 14px 18px;
+      padding: 12px 16px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 7px;
     }
 
     .progress-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 13px;
+      font-size: 12.5px;
       gap: 8px;
     }
 
@@ -350,7 +436,7 @@
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 20px;
-      padding: 16px 18px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -403,8 +489,8 @@
     }
 
     .task-item.completed {
-      background: rgba(16, 185, 129, 0.08);
-      border-color: rgba(16, 185, 129, 0.3);
+      background: rgba(16, 185, 129, 0.09);
+      border-color: rgba(16, 185, 129, 0.32);
     }
 
     .task-item.completed .task-title {
@@ -538,7 +624,6 @@
       border: 1px solid rgba(148, 163, 184, 0.18);
       border-radius: 8px;
       padding: 8px 10px;
-      /* 16px prevents iOS Safari from auto-zooming and breaking layout! */
       font-size: 16px;
       color: #fff;
       outline: none;
@@ -654,16 +739,9 @@
       opacity: 1;
     }
 
-    /* Mobile iPhone Layout Optimization */
     @media (max-width: 600px) {
       .mode-selector {
         grid-template-columns: 1fr;
-      }
-      .header {
-        padding: 16px;
-      }
-      .card-box {
-        padding: 14px;
       }
       .vocab-row {
         align-items: flex-start;
@@ -678,7 +756,6 @@
       }
       .schedule-pill {
         width: 100%;
-        justify-content: center;
       }
     }
   </style>
@@ -696,9 +773,9 @@
         <a href="https://langpn.github.io/elite-roadmap/" target="_blank" class="badge-roadmap">
           🎯 Elite Roadmap
         </a>
-        <div class="badge-sync unauthed" id="sync-badge" onclick="openAuthModal()">
+        <div class="badge-sync" id="sync-badge" onclick="openAuthModal()">
           <span class="sync-dot"></span>
-          <span id="sync-text">🔒 Đăng nhập Sync</span>
+          <span id="sync-text">☁️ Live Sync</span>
         </div>
         <div class="badge-streak">
           🍀 Chuỗi: <span id="streak-count">0</span> ngày
@@ -706,14 +783,24 @@
       </div>
     </header>
 
-    <!-- Date & Auto IUH Schedule Banner -->
-    <div class="date-bar">
-      <div class="date-nav">
-        <button class="nav-btn" onclick="shiftDay(-1)">◀ Hôm qua</button>
-        <span class="current-date-text" id="display-date-label">Hôm nay</span>
-        <button class="nav-btn" id="next-day-btn" onclick="shiftDay(1)" style="display:none;">Ngày sau ▶</button>
-        <button class="nav-btn jump-today" id="jump-today-btn" onclick="jumpToToday()" style="display:none;">Về Hôm Nay</button>
+    <!-- Compact 7-Day Week Strip & Schedule Banner -->
+    <div class="week-card">
+      <div class="week-top-bar">
+        <div class="date-nav">
+          <button class="nav-btn" onclick="shiftDay(-7)" title="Tuần trước">◀ Tuần</button>
+          <button class="nav-btn" onclick="shiftDay(-1)">‹</button>
+          <span class="current-date-text" id="display-date-label">Hôm nay</span>
+          <button class="nav-btn" id="next-day-btn" onclick="shiftDay(1)">›</button>
+          <button class="nav-btn jump-today" id="jump-today-btn" onclick="jumpToToday()" style="display:none;">Hôm nay</button>
+        </div>
+        <span style="font-size: 11px; color: var(--text-dim);">Chạm vào từng thứ để xem • 🍀 = Đủ 100%</span>
       </div>
+
+      <!-- 7-Day Strip (T2 -> CN) -->
+      <div class="week-strip" id="week-strip">
+        <!-- Rendered by JS -->
+      </div>
+
       <div id="schedule-badge" class="schedule-pill schedule-evening">
         📅 Đang tải lịch...
       </div>
@@ -782,9 +869,9 @@
   <div class="modal-backdrop" id="auth-modal" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
     <div class="modal-card">
       <div id="modal-unauthed">
-        <h3 style="font-size: 17px; color: #fff;">🔐 Đồng bộ iPhone ⇄ MacBook</h3>
+        <h3 style="font-size: 17px; color: #fff;">☁️ Đồng bộ Đám mây (iPhone ⇄ Mac)</h3>
         <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
-          Nhập mật khẩu tài khoản của bạn (giống mật khẩu bên Elite Roadmap) để đồng bộ thời gian thực.
+          App đã bật sẵn <strong>Live Stream Tự Động</strong>! Bạn có thể nhập thêm mật khẩu Firebase (giống bên Elite Roadmap) để sao lưu kép an toàn.
         </p>
         <div class="fixed-account-card" style="margin-top: 12px;">
           <span style="font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Tài khoản của Diễm</span>
@@ -793,24 +880,24 @@
           </div>
         </div>
         <div class="input-group" style="margin-top: 12px;">
-          <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter') handleLogin()">
+          <input type="password" id="auth-pass" placeholder="Nhập mật khẩu (tùy chọn)..." onkeydown="if(event.key==='Enter') handleLogin()">
         </div>
         <div id="auth-error" style="display:none; font-size: 12px; color: #f87171; margin-top: 8px;"></div>
         <div class="modal-actions" style="margin-top: 14px;">
           <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
-          <button class="btn-primary" onclick="handleLogin()">Đăng Nhập & Đồng Bộ</button>
+          <button class="btn-primary" onclick="handleLogin()">Đăng Nhập Firebase</button>
         </div>
       </div>
 
       <div id="modal-authed" style="display: none;">
-        <h3 style="font-size: 17px; color: #fff;">☁️ Đã Kết Nối Đám Mây</h3>
+        <h3 style="font-size: 17px; color: #fff;">🍀 Đã Kết Nối Đám Mây Kép</h3>
         <div class="fixed-account-card" style="margin-top: 10px;">
           <div style="font-size: 14px; font-weight: 700; color: #34d399; font-family: 'JetBrains Mono', monospace;">
             🍀 diembd.dev@gmail.com
           </div>
         </div>
         <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 10px;">
-          ✓ Mọi ô bạn tick và từ vựng bạn gõ trên iPhone sẽ tự động hiện ngay trên MacBook!
+          ✓ Dữ liệu của bạn đang được đồng bộ tức thì giữa iPhone & MacBook qua cả Live Stream lẫn Firebase Cloud!
         </p>
         <div class="modal-actions" style="margin-top: 14px;">
           <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
@@ -823,7 +910,14 @@
   <div id="toast">Thông báo</div>
 
   <script>
-    // ==================== FIREBASE CONFIG ====================
+    // ==================== DUAL-ENGINE REALTIME SYNC (LIVE STREAM + FIREBASE) ====================
+    // 1. Live Stream Engine (Tự động đồng bộ iPhone ⇄ MacBook ngay lập tức không cần đăng nhập!)
+    const LIVE_TOPIC = "diem_daily_flow_sync_2004_clover_v2";
+    const LIVE_URL = `https://ntfy.sh/${LIVE_TOPIC}`;
+    const LIVE_SSE = `https://ntfy.sh/${LIVE_TOPIC}/sse`;
+    const DEVICE_ID = "dev_" + Math.random().toString(36).slice(2, 9);
+
+    // 2. Firebase Cloud Backup
     const firebaseConfig = {
       apiKey: "AIzaSyBfj1pBg6Px0pUhERNuRxzPJCqwL9h0G1k",
       authDomain: "my-habits-bbe5b.firebaseapp.com",
@@ -968,19 +1062,109 @@
       return history[dateKey];
     }
 
-    function updateDayData(dateKey, partial) {
+    let vocabSyncTimer = null;
+    function broadcastLiveSync(dateKey, dayObj) {
+      const payload = {
+        sender: DEVICE_ID,
+        dateKey: dateKey,
+        dayData: dayObj,
+        fullHistory: getHistory(),
+        ts: Date.now()
+      };
+      fetch(LIVE_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      }).catch(() => {});
+
+      if (isFirebaseInit && diemRef) {
+        diemRef.child(dateKey).set(dayObj).catch(() => {});
+      }
+    }
+
+    function updateDayData(dateKey, partial, isTyping = false) {
       const history = getHistory();
       const current = getDayData(dateKey);
-      history[dateKey] = { ...current, ...partial };
+      history[dateKey] = { ...current, ...partial, updatedAt: Date.now() };
       saveHistory(history);
 
-      if (isFirebaseInit && auth && auth.currentUser && diemRef) {
-        diemRef.child(dateKey).set(history[dateKey]).catch(() => {});
+      if (isTyping) {
+        clearTimeout(vocabSyncTimer);
+        vocabSyncTimer = setTimeout(() => {
+          broadcastLiveSync(dateKey, history[dateKey]);
+        }, 500);
+      } else {
+        broadcastLiveSync(dateKey, history[dateKey]);
+      }
+    }
+
+    // ==================== 7-DAY WEEK STRIP RENDERER ====================
+    function getMondayOfWeek(dateStr) {
+      const d = parseLocalDate(dateStr);
+      const day = d.getDay(); // 0 (CN) -> 6 (T7)
+      const diff = (day === 0 ? -6 : 1) - day; // Monday is 1
+      d.setDate(d.getDate() + diff);
+      return d;
+    }
+
+    function getDayProgressStatus(dateStr) {
+      const history = getHistory();
+      const rec = history[dateStr];
+      if (!rec || !rec.checked) return 'none';
+      const mode = rec.mode || 'standard';
+      const tasks = getTasksForDate(dateStr, mode);
+      let done = 0;
+      tasks.forEach((_, idx) => {
+        if (rec.checked[`${mode}_${idx}`]) done++;
+      });
+      if (done === 0) return 'none';
+      if (done >= tasks.length) return 'full';
+      return 'partial';
+    }
+
+    function renderWeekStrip() {
+      const stripEl = document.getElementById('week-strip');
+      if (!stripEl) return;
+      stripEl.innerHTML = '';
+
+      const monday = getMondayOfWeek(viewedDateKey);
+      const shortNames = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+
+      for (let i = 0; i < 7; i++) {
+        const cur = new Date(monday);
+        cur.setDate(monday.getDate() + i);
+        const key = formatLocalDate(cur);
+        const isSelected = (key === viewedDateKey);
+        const isToday = (key === todayDateKey);
+        const status = getDayProgressStatus(key);
+
+        let statusClass = '';
+        let iconHtml = '·';
+        if (status === 'full') {
+          statusClass = 'streak-full';
+          iconHtml = '🍀';
+        } else if (status === 'partial') {
+          statusClass = 'streak-partial';
+          iconHtml = '✓';
+        }
+
+        const pill = document.createElement('div');
+        pill.className = `day-pill ${statusClass} ${isSelected ? 'is-selected' : ''} ${isToday ? 'is-today' : ''}`;
+        pill.onclick = () => {
+          viewedDateKey = key;
+          renderAll();
+        };
+
+        pill.innerHTML = `
+          <span class="day-name">${shortNames[i]}</span>
+          <span class="day-num">${String(cur.getDate()).padStart(2, '0')}</span>
+          <div class="day-status-icon">${iconHtml}</div>
+        `;
+        stripEl.appendChild(pill);
       }
     }
 
     // ==================== UI RENDERING ====================
-    function renderAll() {
+    function renderAll(skipVocabFocus = false) {
       todayDateKey = getBiologicalToday();
       const isToday = (viewedDateKey === todayDateKey);
       const d = parseLocalDate(viewedDateKey);
@@ -988,8 +1172,9 @@
       const formatted = `${dayNames[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
 
       document.getElementById('display-date-label').textContent = isToday ? `Hôm nay (${formatted})` : formatted;
-      document.getElementById('next-day-btn').style.display = isToday ? 'none' : 'inline-block';
       document.getElementById('jump-today-btn').style.display = isToday ? 'none' : 'inline-block';
+
+      renderWeekStrip();
 
       const sched = getScheduleForDayOfWeek(d.getDay());
       const badgeEl = document.getElementById('schedule-badge');
@@ -1046,21 +1231,22 @@
       document.getElementById('progress-percent-text').textContent = `${doneCount} / ${tasks.length} (${pct}%)`;
       document.getElementById('progress-fill').style.width = `${pct}%`;
 
-      // Render 3 Vocab inputs (Responsive wrapper for iPhone & Mac)
-      const vocabContainer = document.getElementById('vocab-container');
-      vocabContainer.innerHTML = '';
-      (dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}]).forEach((v, i) => {
-        const vRow = document.createElement('div');
-        vRow.className = 'vocab-row';
-        vRow.innerHTML = `
-          <div class="vocab-num">#${i + 1}</div>
-          <div class="vocab-inputs-wrap">
-            <input type="text" class="vocab-input" placeholder="Từ Tiếng Anh (VD: Retention)..." value="${(v.en || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'en', this.value)">
-            <input type="text" class="vocab-input" placeholder="Nghĩa Tiếng Việt..." value="${(v.vi || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'vi', this.value)">
-          </div>
-        `;
-        vocabContainer.appendChild(vRow);
-      });
+      if (!skipVocabFocus) {
+        const vocabContainer = document.getElementById('vocab-container');
+        vocabContainer.innerHTML = '';
+        (dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}]).forEach((v, i) => {
+          const vRow = document.createElement('div');
+          vRow.className = 'vocab-row';
+          vRow.innerHTML = `
+            <div class="vocab-num">#${i + 1}</div>
+            <div class="vocab-inputs-wrap">
+              <input type="text" class="vocab-input" placeholder="Từ Tiếng Anh (VD: Retention)..." value="${(v.en || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'en', this.value)">
+              <input type="text" class="vocab-input" placeholder="Nghĩa Tiếng Việt..." value="${(v.vi || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'vi', this.value)">
+            </div>
+          `;
+          vocabContainer.appendChild(vRow);
+        });
+      }
 
       updateStreak();
     }
@@ -1069,7 +1255,7 @@
       const dayData = getDayData(viewedDateKey);
       const vocab = [...(dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}])];
       vocab[idx] = { ...vocab[idx], [field]: val };
-      updateDayData(viewedDateKey, { vocab });
+      updateDayData(viewedDateKey, { vocab }, true);
     }
 
     function switchMode(mode) {
@@ -1080,8 +1266,7 @@
     function shiftDay(dir) {
       const curr = parseLocalDate(viewedDateKey);
       curr.setDate(curr.getDate() + dir);
-      const nextKey = formatLocalDate(curr);
-      viewedDateKey = nextKey > todayDateKey ? todayDateKey : nextKey;
+      viewedDateKey = formatLocalDate(curr);
       renderAll();
     }
 
@@ -1144,6 +1329,62 @@
       setTimeout(() => { t.className = ''; }, 2400);
     }
 
+    // ==================== INITIALIZE LIVE STREAM SYNC ====================
+    function applyIncomingSync(payload) {
+      if (!payload || payload.sender === DEVICE_ID) return;
+      const local = getHistory();
+      let changed = false;
+
+      if (payload.fullHistory) {
+        Object.keys(payload.fullHistory).forEach(k => {
+          const remoteDay = payload.fullHistory[k];
+          const localDay = local[k];
+          if (!localDay || (remoteDay.updatedAt || 0) >= (localDay.updatedAt || 0)) {
+            local[k] = remoteDay;
+            changed = true;
+          }
+        });
+      }
+      if (payload.dateKey && payload.dayData) {
+        local[payload.dateKey] = payload.dayData;
+        changed = true;
+      }
+
+      if (changed) {
+        saveHistory(local);
+        renderAll(true);
+      }
+    }
+
+    function initLiveSync() {
+      // 1. Poll recent state
+      fetch(`${LIVE_URL}/json?poll=1`)
+        .then(r => r.text())
+        .then(txt => {
+          txt.trim().split('\n').forEach(line => {
+            if (!line) return;
+            try {
+              const ev = JSON.parse(line);
+              if (ev.message) applyIncomingSync(JSON.parse(ev.message));
+            } catch (e) {}
+          });
+        })
+        .catch(() => {});
+
+      // 2. Real-time SSE listener
+      try {
+        const es = new EventSource(LIVE_SSE);
+        es.onmessage = (e) => {
+          try {
+            const ev = JSON.parse(e.data);
+            if (ev.event === 'message' && ev.message) {
+              applyIncomingSync(JSON.parse(ev.message));
+            }
+          } catch (err) {}
+        };
+      } catch (e) {}
+    }
+
     // ==================== AUTH HANDLERS ====================
     function openAuthModal() {
       document.getElementById('auth-modal').className = 'modal-backdrop open';
@@ -1179,26 +1420,23 @@
 
     if (isFirebaseInit && auth) {
       auth.onAuthStateChanged(user => {
-        const badge = document.getElementById('sync-badge');
         const text = document.getElementById('sync-text');
         if (user) {
-          badge.className = 'badge-sync';
-          text.textContent = '☁️ Đã đồng bộ';
+          text.textContent = '☁️ Cloud + Live Sync';
           diemRef.on('value', snap => {
             const cloud = snap.val() || {};
             const local = getHistory();
             const merged = { ...local, ...cloud };
             saveHistory(merged);
-            renderAll();
+            renderAll(true);
           });
         } else {
-          badge.className = 'badge-sync unauthed';
-          text.textContent = '🔒 Đăng nhập Sync';
-          if (diemRef) diemRef.off();
+          text.textContent = '☁️ Live Sync Bật';
         }
       });
     }
 
+    initLiveSync();
     renderAll();
   </script>
 </body>
