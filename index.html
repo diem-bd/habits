@@ -224,6 +224,7 @@
     }
 
     .day-pill {
+      position: relative;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(148, 163, 184, 0.12);
       border-radius: 12px;
@@ -236,6 +237,72 @@
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
+    }
+
+    .day-pill.has-important {
+      border-color: rgba(251, 191, 36, 0.45);
+      background: linear-gradient(180deg, rgba(251, 191, 36, 0.10) 0%, rgba(255, 255, 255, 0.02) 100%);
+    }
+
+    .day-important-star {
+      position: absolute;
+      top: -5px;
+      right: -3px;
+      font-size: 10px;
+      line-height: 1;
+      filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
+      pointer-events: none;
+    }
+
+    .day-important-star.all-done {
+      opacity: 0.55;
+      filter: none;
+    }
+
+    .week-events-bar {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 2px;
+    }
+
+    .week-events-bar.has-items {
+      display: flex;
+    }
+
+    .week-event-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(251, 191, 36, 0.10);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      color: #fde68a;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      max-width: 100%;
+    }
+
+    .week-event-chip:hover {
+      background: rgba(251, 191, 36, 0.18);
+    }
+
+    .week-event-chip.is-done {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+
+    .week-event-chip .chip-countdown {
+      font-size: 10px;
+      font-weight: 700;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.16);
+      padding: 1px 5px;
+      border-radius: 5px;
+      white-space: nowrap;
     }
 
     .day-pill.is-selected {
@@ -543,6 +610,68 @@
       border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
+    }
+
+    .important-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(7, 14, 23, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .important-toggle-btn.active {
+      background: rgba(251, 191, 36, 0.16);
+      border-color: #fbbf24;
+      color: #fde68a;
+      box-shadow: 0 0 10px rgba(251, 191, 36, 0.2);
+    }
+
+    .task-item.is-important-task {
+      border-left: 3px solid #fbbf24;
+      background: rgba(251, 191, 36, 0.055);
+      border-color: rgba(251, 191, 36, 0.22);
+    }
+
+    .task-category.important-cat {
+      color: #fbbf24;
+    }
+
+    .task-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .star-custom-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-dim);
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .star-custom-btn.active {
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.3);
     }
 
     .task-item {
@@ -895,6 +1024,9 @@
         <!-- Rendered by JS -->
       </div>
 
+      <!-- Ultra-Compact Week Important Events Bar (Auto-hidden when empty) -->
+      <div class="week-events-bar" id="week-events-bar"></div>
+
       <div id="schedule-badge" class="schedule-pill schedule-evening">
         📅 Đang tải lịch...
       </div>
@@ -947,10 +1079,13 @@
       <!-- Collapsible Add Custom Task Bar with Native Time Picker -->
       <div class="add-task-drawer" id="add-task-drawer">
         <div class="time-picker-wrap">
-          <span class="time-picker-label">⏰ Chọn giờ:</span>
+          <span class="time-picker-label">⏰ Giờ:</span>
           <input type="time" id="custom-task-time" class="add-task-time-input" value="07:30">
         </div>
-        <input type="text" id="custom-task-title" class="add-task-title-input" placeholder="Nhập việc cần làm (VD: Thiền, Nộp bài...)" onkeydown="if(event.key==='Enter') addCustomTask()">
+        <button type="button" class="important-toggle-btn" id="custom-task-important-btn" onclick="toggleImportantDraft()" title="Đánh dấu là lịch thi / kiểm tra / nộp bài quan trọng">
+          ⭐ Quan trọng
+        </button>
+        <input type="text" id="custom-task-title" class="add-task-title-input" placeholder="Nhập việc / lịch thi / nộp bài..." onkeydown="if(event.key==='Enter') addCustomTask()">
         <button class="add-task-submit-btn" onclick="addCustomTask()">Thêm vào lịch</button>
       </div>
 
@@ -1236,6 +1371,14 @@
     }
 
     // ==================== CUSTOM TASKS PER DAY (ON-DEMAND, CLEAN UI) ====================
+    let isImportantDraft = false;
+
+    function toggleImportantDraft() {
+      isImportantDraft = !isImportantDraft;
+      const btn = document.getElementById('custom-task-important-btn');
+      if (btn) btn.classList.toggle('active', isImportantDraft);
+    }
+
     function toggleAddTaskDrawer() {
       const drawer = document.getElementById('add-task-drawer');
       const isOpen = drawer.classList.toggle('open');
@@ -1260,19 +1403,25 @@
 
       const dayData = getDayData(viewedDateKey);
       const customTasks = [...(dayData.customTasks || [])];
+      const markedImportant = isImportantDraft;
+
       customTasks.push({
         id: 'ct_' + Date.now(),
         time: time,
         title: title,
+        important: markedImportant,
         done: false
       });
 
       titleInput.value = '';
+      isImportantDraft = false;
+      const impBtn = document.getElementById('custom-task-important-btn');
+      if (impBtn) impBtn.classList.remove('active');
       document.getElementById('add-task-drawer').classList.remove('open');
 
       updateDayData(viewedDateKey, { customTasks });
       renderAll();
-      showToast(`🍀 Đã chèn "${title}" vào mốc ${time}!`);
+      showToast(markedImportant ? `⭐ Đã ghim lịch quan trọng "${title}" (${time})!` : `🍀 Đã chèn "${title}" vào mốc ${time}!`);
     }
 
     function toggleCustomTask(taskId) {
@@ -1283,6 +1432,22 @@
       });
       updateDayData(viewedDateKey, { customTasks });
       renderAll();
+    }
+
+    function toggleCustomTaskImportant(taskId, e) {
+      if (e) e.stopPropagation();
+      const dayData = getDayData(viewedDateKey);
+      let nowImportant = false;
+      const customTasks = (dayData.customTasks || []).map(ct => {
+        if (ct.id === taskId) {
+          nowImportant = !ct.important;
+          return { ...ct, important: nowImportant };
+        }
+        return ct;
+      });
+      updateDayData(viewedDateKey, { customTasks });
+      renderAll();
+      showToast(nowImportant ? "⭐ Đã đánh dấu việc quan trọng trên lịch tuần!" : "Đã bỏ đánh dấu quan trọng");
     }
 
     function deleteCustomTask(taskId, e) {
@@ -1326,13 +1491,39 @@
       return 'partial';
     }
 
+    function getDayImportantInfo(dateStr) {
+      const history = getHistory();
+      const rec = history[dateStr];
+      if (!rec || !Array.isArray(rec.customTasks)) return { count: 0, allDone: false, items: [] };
+      const items = rec.customTasks.filter(ct => ct.important);
+      if (items.length === 0) return { count: 0, allDone: false, items: [] };
+      const allDone = items.every(ct => ct.done);
+      return { count: items.length, allDone, items };
+    }
+
+    function getCountdownLabel(targetDateKey) {
+      const todayD = parseLocalDate(todayDateKey);
+      const targetD = parseLocalDate(targetDateKey);
+      const diffDays = Math.round((targetD - todayD) / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return 'Hôm nay';
+      if (diffDays === 1) return 'Ngày mai';
+      if (diffDays > 1) return `Còn ${diffDays} ngày`;
+      return 'Đã qua';
+    }
+
     function renderWeekStrip() {
       const stripEl = document.getElementById('week-strip');
+      const eventsBarEl = document.getElementById('week-events-bar');
       if (!stripEl) return;
       stripEl.innerHTML = '';
+      if (eventsBarEl) {
+        eventsBarEl.innerHTML = '';
+        eventsBarEl.classList.remove('has-items');
+      }
 
       const monday = getMondayOfWeek(viewedDateKey);
       const shortNames = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
+      const weekEvents = [];
 
       for (let i = 0; i < 7; i++) {
         const cur = new Date(monday);
@@ -1341,6 +1532,20 @@
         const isSelected = (key === viewedDateKey);
         const isToday = (key === todayDateKey);
         const status = getDayProgressStatus(key);
+        const impInfo = getDayImportantInfo(key);
+
+        if (impInfo.count > 0) {
+          impInfo.items.forEach(item => {
+            weekEvents.push({
+              dateKey: key,
+              dayShort: shortNames[i],
+              dayNum: `${String(cur.getDate()).padStart(2, '0')}/${String(cur.getMonth() + 1).padStart(2, '0')}`,
+              time: item.time,
+              title: item.title,
+              done: Boolean(item.done)
+            });
+          });
+        }
 
         let statusClass = '';
         let iconHtml = '·';
@@ -1353,18 +1558,41 @@
         }
 
         const pill = document.createElement('div');
-        pill.className = `day-pill ${statusClass} ${isSelected ? 'is-selected' : ''} ${isToday ? 'is-today' : ''}`;
+        pill.className = `day-pill ${statusClass} ${impInfo.count > 0 ? 'has-important' : ''} ${isSelected ? 'is-selected' : ''} ${isToday ? 'is-today' : ''}`;
         pill.onclick = () => {
           viewedDateKey = key;
           renderAll();
         };
 
+        const starBadge = impInfo.count > 0
+          ? `<span class="day-important-star ${impInfo.allDone ? 'all-done' : ''}">⭐</span>`
+          : '';
+
         pill.innerHTML = `
+          ${starBadge}
           <span class="day-name">${shortNames[i]}</span>
           <span class="day-num">${String(cur.getDate()).padStart(2, '0')}</span>
           <div class="day-status-icon">${iconHtml}</div>
         `;
         stripEl.appendChild(pill);
+      }
+
+      if (eventsBarEl && weekEvents.length > 0) {
+        eventsBarEl.classList.add('has-items');
+        weekEvents.forEach(ev => {
+          const chip = document.createElement('div');
+          chip.className = `week-event-chip ${ev.done ? 'is-done' : ''}`;
+          chip.onclick = () => {
+            viewedDateKey = ev.dateKey;
+            renderAll();
+          };
+          const countdownText = ev.done ? '✓ Xong' : getCountdownLabel(ev.dateKey);
+          chip.innerHTML = `
+            <span>⭐ <strong>${ev.dayShort} (${ev.dayNum})</strong> • ${ev.time}: ${ev.title}</span>
+            <span class="chip-countdown">${countdownText}</span>
+          `;
+          eventsBarEl.appendChild(chip);
+        });
       }
     }
 
@@ -1418,12 +1646,14 @@
       });
 
       customTasks.forEach(ct => {
+        const isImp = Boolean(ct.important);
         combinedList.push({
           isCustom: true,
           id: ct.id,
           time: ct.time,
           sortMinutes: parseTimeToMinutes(ct.time),
-          cat: '🍀 Việc Thêm Riêng',
+          important: isImp,
+          cat: isImp ? '⭐ Quan Trọng / Thi Cử' : '🍀 Việc Thêm Riêng',
           title: ct.title,
           desc: '',
           done: Boolean(ct.done)
@@ -1440,7 +1670,7 @@
         if (item.done) doneCount++;
 
         const row = document.createElement('div');
-        row.className = `task-item ${item.isCustom ? 'is-custom-task' : ''} ${item.done ? 'completed' : ''}`;
+        row.className = `task-item ${item.isCustom ? 'is-custom-task' : ''} ${item.important ? 'is-important-task' : ''} ${item.done ? 'completed' : ''}`;
 
         if (item.isCustom) {
           row.onclick = () => toggleCustomTask(item.id);
@@ -1453,11 +1683,14 @@
             <div class="task-info">
               <div class="task-meta">
                 <span class="task-time">${item.time}</span>
-                <span class="task-category">${item.cat}</span>
+                <span class="task-category ${item.important ? 'important-cat' : ''}">${item.cat}</span>
               </div>
               <div class="task-title">${item.title}</div>
             </div>
-            <button class="delete-custom-btn" onclick="deleteCustomTask('${item.id}', event)" title="Xoá việc này">✕</button>
+            <div class="task-actions-right">
+              <button class="star-custom-btn ${item.important ? 'active' : ''}" onclick="toggleCustomTaskImportant('${item.id}', event)" title="Đánh dấu việc quan trọng / thi cử">★</button>
+              <button class="delete-custom-btn" onclick="deleteCustomTask('${item.id}', event)" title="Xoá việc này">✕</button>
+            </div>
           `;
         } else {
           row.onclick = () => {
