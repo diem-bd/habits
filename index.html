@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Diễm's Daily Flow 🌸 | Kỷ Luật Nhẹ Nhàng & Bền Bỉ</title>
+  
+  <!-- PWA & Mobile Web App Meta -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Diễm Habits">
+  <meta name="theme-color" content="#090d16">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23090d16'/><text x='50%' y='55%' dominant-baseline='central' text-anchor='middle' font-size='60'>🌸</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --card-bg: rgba(18, 25, 42, 0.78);
+      --card-border: rgba(255, 255, 255, 0.09);
+      --accent-sky: #38bdf8;
+      --accent-sky-glow: rgba(56, 189, 248, 0.22);
+      --accent-pink: #f472b6;
+      --accent-pink-glow: rgba(244, 114, 182, 0.22);
+      --accent-amber: #fbbf24;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(244, 114, 182, 0.12) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: env(safe-area-inset-top, 20px) 16px env(safe-area-inset-bottom, 32px) 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .header-title h1 {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #ffffff 20%, #38bdf8 60%, #f472b6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-title p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-roadmap {
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .badge-roadmap:hover {
+      background: rgba(56, 189, 248, 0.24);
+      transform: translateY(-1px);
+    }
+
+    .badge-sync {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #34d399;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .badge-sync.unauthed {
+      background: rgba(251, 191, 36, 0.12);
+      border-color: rgba(251, 191, 36, 0.35);
+      color: #fbbf24;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 8px #10b981;
+    }
+
+    .badge-sync.unauthed .sync-dot {
+      background: #fbbf24;
+      box-shadow: none;
+    }
+
+    .badge-streak {
+      background: rgba(244, 114, 182, 0.14);
+      border: 1px solid rgba(244, 114, 182, 0.35);
+      color: #f472b6;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Date & Schedule Banner */
+    .date-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .date-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .nav-btn.jump-today {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+    }
+
+    .current-date-text {
+      font-weight: 700;
+      font-size: 13.5px;
+      color: #fff;
+    }
+
+    .schedule-pill {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .schedule-free {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #34d399;
+    }
+
+    .schedule-evening {
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #38bdf8;
+    }
+
+    .schedule-weekend {
+      background: rgba(244, 114, 182, 0.15);
+      border: 1px solid rgba(244, 114, 182, 0.35);
+      color: #f472b6;
+    }
+
+    /* 2-Mode Switcher */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .mode-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .mode-btn.active-standard {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: var(--accent-sky);
+      box-shadow: 0 0 18px var(--accent-sky-glow);
+    }
+
+    .mode-btn.active-light {
+      background: rgba(244, 114, 182, 0.12);
+      border-color: var(--accent-pink);
+      box-shadow: 0 0 18px var(--accent-pink-glow);
+    }
+
+    .mode-tag {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .mode-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .mode-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    /* Progress Bar */
+    .progress-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .progress-pct {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      transition: width 0.3s ease;
+      background: linear-gradient(90deg, #38bdf8, #f472b6);
+    }
+
+    /* Checklist Card */
+    .card-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .task-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .task-item.completed {
+      background: rgba(16, 185, 129, 0.06);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .task-item.completed .task-title {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    .checkbox-custom {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .task-item.completed .checkbox-custom {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+    }
+
+    .checkbox-custom svg {
+      opacity: 0;
+    }
+
+    .task-item.completed .checkbox-custom svg {
+      opacity: 1;
+    }
+
+    .task-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-sky);
+      background: rgba(56, 189, 248, 0.12);
+      padding: 1px 7px;
+      border-radius: 4px;
+    }
+
+    .task-category {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .task-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .task-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* English 3-Words Mini Vault */
+    .vocab-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .vocab-row {
+      display: grid;
+      grid-template-columns: 28px 1fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .vocab-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-pink);
+      background: rgba(244, 114, 182, 0.12);
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .vocab-input {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .vocab-input:focus {
+      border-color: var(--accent-sky);
+    }
+
+    /* Auth Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.72);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 22px;
+      width: 100%;
+      max-width: 390px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fixed-account-card {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 11px 14px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-group input {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: #fff;
+      outline: none;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      background: linear-gradient(135deg, #38bdf8, #f472b6);
+      border: none;
+      color: #090d16;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1e293b;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-size: 13px;
+      font-weight: 600;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 99999;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+      .mode-selector {
+        grid-template-columns: 1fr;
+      }
+      .vocab-row {
+        grid-template-columns: 24px 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">
+        <h1>🌸 DIỄM'S DAILY FLOW</h1>
+        <p>DaVinci Edit • Tiếng Anh Thực Chiến • Chạy Bộ & Ngủ Sớm</p>
+      </div>
+      <div class="header-badges">
+        <a href="https://langpn.github.io/elite-roadmap/" target="_blank" class="badge-roadmap">
+          🎯 Elite Roadmap
+        </a>
+        <div class="badge-sync unauthed" id="sync-badge" onclick="openAuthModal()">
+          <span class="sync-dot"></span>
+          <span id="sync-text">🔒 Đăng nhập Sync</span>
+        </div>
+        <div class="badge-streak">
+          🔥 Chuỗi: <span id="streak-count">0</span> ngày
+        </div>
+      </div>
+    </header>
+
+    <!-- Date & Auto IUH Schedule Banner -->
+    <div class="date-bar">
+      <div class="date-nav">
+        <button class="nav-btn" onclick="shiftDay(-1)">◀ Hôm qua</button>
+        <span class="current-date-text" id="display-date-label">Hôm nay</span>
+        <button class="nav-btn" id="next-day-btn" onclick="shiftDay(1)" style="display:none;">Ngày sau ▶</button>
+        <button class="nav-btn jump-today" id="jump-today-btn" onclick="jumpToToday()" style="display:none;">Về Hôm Nay</button>
+      </div>
+      <div id="schedule-badge" class="schedule-pill schedule-evening">
+        📅 Đang tải lịch...
+      </div>
+    </div>
+
+    <!-- 2-Mode Switcher: Nhịp Chuẩn vs Mức Sàn Chống Ngộp -->
+    <div class="mode-selector">
+      <div class="mode-btn active-standard" id="btn-standard" onclick="switchMode('standard')">
+        <span class="mode-tag" style="color: var(--accent-sky);">Nhịp Chuẩn Hàng Ngày</span>
+        <div class="mode-name">☀️ Ngày Năng Lượng (5 Việc Cốt Lõi)</div>
+        <div class="mode-desc">Làm DaVinci & Tiếng Anh vào ban ngày tỉnh táo, chiều chạy bộ 25p, sau 21:00 xả hơi hoàn toàn.</div>
+      </div>
+
+      <div class="mode-btn" id="btn-light" onclick="switchMode('light')">
+        <span class="mode-tag" style="color: var(--accent-pink);">Chống Ngộp • Ngày Mệt / Cuối Tuần</span>
+        <div class="mode-name">🌸 Mức Sàn Không Đứt Chuỗi (4 Việc Nhỏ)</div>
+        <div class="mode-desc">Áp dụng khi mệt hoặc bận học trường. Chỉ cần làm 4 việc nhỏ xíu này là vẫn giữ vững 100% kỷ luật!</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-card">
+      <div class="progress-top">
+        <span style="color: var(--text-muted); font-weight: 600;">
+          Tiến độ hôm nay: <strong id="mode-display-name" style="color: var(--accent-sky);">Ngày Năng Lượng</strong>
+        </span>
+        <span class="progress-pct" id="progress-percent-text">0 / 5 (0%)</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <!-- Checklist Card -->
+    <div class="card-box">
+      <div class="card-header">
+        <div class="card-title">
+          <span>✅</span> Checklist Trong Ngày
+        </div>
+        <button class="action-btn" onclick="copyObsidianMarkdown()">
+          📋 Copy sang Obsidian
+        </button>
+      </div>
+
+      <div id="tasks-container" style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- 3 English Words Mini Input -->
+    <div class="card-box">
+      <div class="card-header">
+        <div class="card-title">
+          <span>🇬🇧</span> 3 Từ Tiếng Anh Thực Chiến (Nhặt từ Video Edit)
+        </div>
+        <span style="font-size: 11px; color: var(--text-dim);">Tự động lưu Cloud</span>
+      </div>
+      <div class="vocab-grid" id="vocab-container">
+        <!-- 3 rows injected by JS -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Auth Modal -->
+  <div class="modal-backdrop" id="auth-modal" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
+    <div class="modal-card">
+      <div id="modal-unauthed">
+        <h3 style="font-size: 17px; color: #fff;">🔐 Đồng bộ iPhone ⇄ MacBook</h3>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
+          Nhập mật khẩu tài khoản của bạn (giống mật khẩu bên Elite Roadmap) để đồng bộ thời gian thực.
+        </p>
+        <div class="fixed-account-card" style="margin-top: 12px;">
+          <span style="font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Tài khoản của Diễm</span>
+          <div style="font-size: 14px; font-weight: 700; color: #38bdf8; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
+            🌸 diembd.dev@gmail.com
+          </div>
+        </div>
+        <div class="input-group" style="margin-top: 12px;">
+          <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." onkeydown="if(event.key==='Enter') handleLogin()">
+        </div>
+        <div id="auth-error" style="display:none; font-size: 12px; color: #f87171; margin-top: 8px;"></div>
+        <div class="modal-actions" style="margin-top: 14px;">
+          <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
+          <button class="btn-primary" onclick="handleLogin()">Đăng Nhập & Đồng Bộ</button>
+        </div>
+      </div>
+
+      <div id="modal-authed" style="display: none;">
+        <h3 style="font-size: 17px; color: #fff;">☁️ Đã Kết Nối Đám Mây</h3>
+        <div class="fixed-account-card" style="margin-top: 10px;">
+          <div style="font-size: 14px; font-weight: 700; color: #10b981; font-family: 'JetBrains Mono', monospace;">
+            🌸 diembd.dev@gmail.com
+          </div>
+        </div>
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 10px;">
+          ✓ Mọi ô bạn tick và từ vựng bạn gõ trên iPhone sẽ tự động hiện ngay trên MacBook!
+        </p>
+        <div class="modal-actions" style="margin-top: 14px;">
+          <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
+          <button class="btn-secondary" style="color:#f87171;" onclick="handleLogout()">Đăng Xuất</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast">Thông báo</div>
+
+  <script>
+    // ==================== FIREBASE CONFIG ====================
+    const firebaseConfig = {
+      apiKey: "AIzaSyBfj1pBg6Px0pUhERNuRxzPJCqwL9h0G1k",
+      authDomain: "my-habits-bbe5b.firebaseapp.com",
+      databaseURL: "https://my-habits-bbe5b-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "my-habits-bbe5b",
+      storageBucket: "my-habits-bbe5b.firebasestorage.app",
+      messagingSenderId: "46496314879",
+      appId: "1:46496314879:web:0011dad743b74200f423ca"
+    };
+
+    const FIXED_USER_EMAIL = "diembd.dev@gmail.com";
+    const STORAGE_KEY = "diem_daily_flow_v1";
+
+    let auth = null;
+    let db = null;
+    let diemRef = null;
+    let isFirebaseInit = false;
+
+    try {
+      firebase.initializeApp(firebaseConfig);
+      auth = firebase.auth();
+      db = firebase.database();
+      // Nhánh riêng biệt cho Diễm trên Firebase
+      diemRef = db.ref('habits_vault_history/diem_daily_flow');
+      isFirebaseInit = true;
+      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    } catch (e) {
+      console.warn("Firebase notice:", e);
+    }
+
+    // ==================== LỊCH HỌC IUH THEO THỨ TRONG TUẦN ====================
+    // 0: CN, 1: T2, 2: T3, 3: T4, 4: T5, 5: T6, 6: T7
+    function getScheduleForDayOfWeek(dayIndex) {
+      if (dayIndex === 3 || dayIndex === 4) {
+        return {
+          type: 'free',
+          badgeClass: 'schedule-free',
+          label: '🟢 NGÀY VÀNG TỰ DO (Không học trường • Sáng & Chiều làm Edit thoải mái)',
+          schoolTaskTitle: 'Tối Tự Do & Xả Hơi (Hôm nay không học trường!)',
+          schoolTaskDesc: 'Tối Thứ 4 & Thứ 5 không có lịch học IUH. Bạn hoàn toàn tự do nghỉ ngơi hoặc dựng thêm tùy hứng!'
+        };
+      } else if (dayIndex === 6) {
+        return {
+          type: 'sat',
+          badgeClass: 'schedule-weekend',
+          label: '🌤️ THỨ 7: Sáng Rảnh • Học Online 12:30 – 21:00',
+          schoolTaskTitle: 'Học Online Liên Thông 3 môn (12:30 – 21:00)',
+          schoolTaskDesc: 'Bật máy điểm danh và học 3 môn chiều tối. Học xong 21:00 là đóng máy nghỉ ngơi hoàn toàn!'
+        };
+      } else if (dayIndex === 0) {
+        return {
+          type: 'sun',
+          badgeClass: 'schedule-weekend',
+          label: '🌿 CHỦ NHẬT: Học Online 07:00 – 21:00 (Ngày nghỉ phép của DaVinci)',
+          schoolTaskTitle: 'Học Online Liên Thông cả ngày (07:00 – 21:00)',
+          schoolTaskDesc: 'Chủ Nhật học cả ngày trên trường nên không ép cày DaVinci để tránh bị ngộp!'
+        };
+      } else {
+        return {
+          type: 'evening',
+          badgeClass: 'schedule-evening',
+          label: '🟡 NGÀY HỌC TỐI: Sáng & Chiều Rảnh 100% • Tối học Online 18:00 – 21:00',
+          schoolTaskTitle: 'Học Online Liên Thông (18:00 – 21:00)',
+          schoolTaskDesc: 'Bật lớp điểm danh, nghe giảng nhẹ nhàng đủ qua môn. Đúng 21:00 đóng máy xả hơi!'
+        };
+      }
+    }
+
+    function getTasksForDate(dateStr, mode) {
+      const d = parseLocalDate(dateStr);
+      const sched = getScheduleForDayOfWeek(d.getDay());
+
+      if (mode === 'light') {
+        return [
+          { time: "07:00", cat: "Giấc ngủ", title: "Dậy đúng giờ (07:00) & Uống 1 cốc nước ấm", desc: "Chế độ Mức Sàn: Chỉ cần dậy đúng giờ là đã thắng 50% ngày hôm nay." },
+          { time: "45 - 60p", cat: "DaVinci Nén", title: "Mở DaVinci Resolve thực hành tối thiểu 45 phút", desc: "Làm 1 bước nhỏ trong Task hiện tại trên Elite Roadmap để giữ cảm giác tay Q-W-E." },
+          { time: "16:30", cat: "Vận động", title: "Đi bộ nhanh / Chạy bộ nhẹ 15 – 20 phút", desc: "Bước ra ngoài hít thở, vận động nhẹ nhàng để cơ thể khỏe khoắn, không trì trệ." },
+          { time: "22:45", cat: "Tiếng Anh & Ngủ", title: "Ghi 3 từ Tiếng Anh bên dưới & Lên giường trước 23:00", desc: "Gõ nhanh 3 từ gặp trong video và đi ngủ sớm nạp năng lượng cho ngày mai." }
+        ];
+      }
+
+      // Standard mode
+      return [
+        { time: "07:00", cat: "Khởi động", title: "Thức dậy đúng giờ, uống nước ấm & ăn sáng", desc: "Bắt đầu ngày mới thong thả, tỉnh táo, không nằm nướng lướt điện thoại." },
+        { time: "08:30 - 10:30", cat: "Ca Vàng 1", title: "🔥 Ca Vàng DaVinci Sáng (2 tiếng tập trung sâu)", desc: "Lúc não sáng suốt nhất: Mở Elite Roadmap làm nhiệm vụ trọng tâm của Sprint." },
+        { time: "14:00 - 15:30", cat: "Ca Vàng 2", title: "🎬 Thực hành DaVinci Chiều + Nhặt 3 từ Tiếng Anh", desc: "Hoàn thiện tiếp bài dựng buổi sáng và ghi lại 3 từ tiếng Anh gặp trong video xuống sổ bên dưới." },
+        { time: "16:30 - 17:00", cat: "Thể chất", title: "🏃 Chạy bộ / Tập thể dục 20 – 30 phút", desc: "Rũ bỏ mỏi mệt, bơm oxy lên não trước khi tắm rửa ăn tối." },
+        { time: "18:00 - 22:45", cat: "Trường & Ngủ", title: `🎓 ${sched.schoolTaskTitle} + Ngủ trước 23:00`, desc: sched.schoolTaskDesc }
+      ];
+    }
+
+    // ==================== DATE & STORAGE ====================
+    function formatLocalDate(d) {
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function parseLocalDate(dateStr) {
+      const parts = (dateStr || '').split('-').map(Number);
+      if (parts.length !== 3 || isNaN(parts[0])) return new Date();
+      return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0);
+    }
+
+    function getBiologicalToday() {
+      const now = new Date();
+      if (now.getHours() < 4) now.setDate(now.getDate() - 1);
+      return formatLocalDate(now);
+    }
+
+    let todayDateKey = getBiologicalToday();
+    let viewedDateKey = todayDateKey;
+
+    function getHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveHistory(data) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function getDayData(dateKey) {
+      const history = getHistory();
+      if (!history[dateKey]) {
+        const d = parseLocalDate(dateKey);
+        // Chủ Nhật tự động gợi ý chế độ Nhẹ nhàng (light)
+        const defaultMode = (d.getDay() === 0) ? 'light' : 'standard';
+        history[dateKey] = {
+          mode: defaultMode,
+          checked: {},
+          vocab: [
+            { en: "", vi: "" },
+            { en: "", vi: "" },
+            { en: "", vi: "" }
+          ]
+        };
+        saveHistory(history);
+      }
+      if (!history[dateKey].vocab) {
+        history[dateKey].vocab = [{ en: "", vi: "" }, { en: "", vi: "" }, { en: "", vi: "" }];
+      }
+      return history[dateKey];
+    }
+
+    function updateDayData(dateKey, partial) {
+      const history = getHistory();
+      const current = getDayData(dateKey);
+      history[dateKey] = { ...current, ...partial };
+      saveHistory(history);
+
+      if (isFirebaseInit && auth && auth.currentUser && diemRef) {
+        diemRef.child(dateKey).set(history[dateKey]).catch(() => {});
+      }
+    }
+
+    // ==================== UI RENDERING ====================
+    function renderAll() {
+      todayDateKey = getBiologicalToday();
+      const isToday = (viewedDateKey === todayDateKey);
+      const d = parseLocalDate(viewedDateKey);
+      const dayNames = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+      const formatted = `${dayNames[d.getDay()]}, ${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+      document.getElementById('display-date-label').textContent = isToday ? `Hôm nay (${formatted})` : formatted;
+      document.getElementById('next-day-btn').style.display = isToday ? 'none' : 'inline-block';
+      document.getElementById('jump-today-btn').style.display = isToday ? 'none' : 'inline-block';
+
+      const sched = getScheduleForDayOfWeek(d.getDay());
+      const badgeEl = document.getElementById('schedule-badge');
+      badgeEl.className = `schedule-pill ${sched.badgeClass}`;
+      badgeEl.textContent = sched.label;
+
+      const dayData = getDayData(viewedDateKey);
+      const mode = dayData.mode || 'standard';
+
+      document.getElementById('btn-standard').className = 'mode-btn ' + (mode === 'standard' ? 'active-standard' : '');
+      document.getElementById('btn-light').className = 'mode-btn ' + (mode === 'light' ? 'active-light' : '');
+      document.getElementById('mode-display-name').textContent = mode === 'standard' ? 'Ngày Năng Lượng' : 'Mức Sàn Chống Ngộp';
+      document.getElementById('mode-display-name').style.color = mode === 'standard' ? 'var(--accent-sky)' : 'var(--accent-pink)';
+
+      const tasks = getTasksForDate(viewedDateKey, mode);
+      const container = document.getElementById('tasks-container');
+      container.innerHTML = '';
+
+      let doneCount = 0;
+      tasks.forEach((t, idx) => {
+        const key = `${mode}_${idx}`;
+        const isDone = Boolean(dayData.checked && dayData.checked[key]);
+        if (isDone) doneCount++;
+
+        const row = document.createElement('div');
+        row.className = `task-item ${isDone ? 'completed' : ''}`;
+        row.onclick = () => {
+          const cur = getDayData(viewedDateKey);
+          const checked = { ...(cur.checked || {}) };
+          checked[key] = !checked[key];
+          updateDayData(viewedDateKey, { checked });
+          renderAll();
+        };
+
+        row.innerHTML = `
+          <div class="checkbox-custom">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="task-info">
+            <div class="task-meta">
+              <span class="task-time">${t.time}</span>
+              <span class="task-category">${t.cat}</span>
+            </div>
+            <div class="task-title">${t.title}</div>
+            <div class="task-desc">${t.desc}</div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      const pct = Math.round((doneCount / tasks.length) * 100);
+      document.getElementById('progress-percent-text').textContent = `${doneCount} / ${tasks.length} (${pct}%)`;
+      document.getElementById('progress-fill').style.width = `${pct}%`;
+
+      // Render 3 Vocab inputs
+      const vocabContainer = document.getElementById('vocab-container');
+      vocabContainer.innerHTML = '';
+      (dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}]).forEach((v, i) => {
+        const vRow = document.createElement('div');
+        vRow.className = 'vocab-row';
+        vRow.innerHTML = `
+          <div class="vocab-num">#${i + 1}</div>
+          <input type="text" class="vocab-input" placeholder="Từ tiếng Anh (VD: Retention)..." value="${(v.en || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'en', this.value)">
+          <input type="text" class="vocab-input" placeholder="Nghĩa tiếng Việt..." value="${(v.vi || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'vi', this.value)">
+        `;
+        vocabContainer.appendChild(vRow);
+      });
+
+      updateStreak();
+    }
+
+    function handleVocabChange(idx, field, val) {
+      const dayData = getDayData(viewedDateKey);
+      const vocab = [...(dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}])];
+      vocab[idx] = { ...vocab[idx], [field]: val };
+      updateDayData(viewedDateKey, { vocab });
+    }
+
+    function switchMode(mode) {
+      updateDayData(viewedDateKey, { mode });
+      renderAll();
+    }
+
+    function shiftDay(dir) {
+      const curr = parseLocalDate(viewedDateKey);
+      curr.setDate(curr.getDate() + dir);
+      const nextKey = formatLocalDate(curr);
+      viewedDateKey = nextKey > todayDateKey ? todayDateKey : nextKey;
+      renderAll();
+    }
+
+    function jumpToToday() {
+      viewedDateKey = getBiologicalToday();
+      renderAll();
+    }
+
+    function updateStreak() {
+      const history = getHistory();
+      let streak = 0;
+      let cursor = parseLocalDate(todayDateKey);
+      const todayRec = history[todayDateKey];
+      const doneToday = Boolean(todayRec && todayRec.checked && Object.values(todayRec.checked).some(Boolean));
+
+      if (!doneToday) {
+        cursor.setDate(cursor.getDate() - 1);
+      }
+      while (true) {
+        const k = formatLocalDate(cursor);
+        const rec = history[k];
+        if (rec && rec.checked && Object.values(rec.checked).some(Boolean)) {
+          streak++;
+          cursor.setDate(cursor.getDate() - 1);
+        } else {
+          break;
+        }
+      }
+      document.getElementById('streak-count').textContent = streak;
+    }
+
+    function copyObsidianMarkdown() {
+      const dayData = getDayData(viewedDateKey);
+      const mode = dayData.mode || 'standard';
+      const tasks = getTasksForDate(viewedDateKey, mode);
+
+      let md = `### 🌸 Nhật Ký Kỷ Luật (${viewedDateKey})\n`;
+      tasks.forEach((t, i) => {
+        const isDone = Boolean(dayData.checked && dayData.checked[`${mode}_${i}`]);
+        md += `- [${isDone ? 'x' : ' '}] **${t.time}**: ${t.title}\n`;
+      });
+
+      const vocabs = (dayData.vocab || []).filter(v => v.en.trim() || v.vi.trim());
+      if (vocabs.length > 0) {
+        md += `\n**🇬🇧 Từ vựng Tiếng Anh hôm nay:**\n`;
+        vocabs.forEach(v => {
+          md += `- **${v.en}**: ${v.vi}\n`;
+        });
+      }
+
+      navigator.clipboard.writeText(md).then(() => {
+        showToast("Đã copy vào Clipboard! Dán vào Obsidian ngay nhé 🌸");
+      });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'show';
+      setTimeout(() => { t.className = ''; }, 2400);
+    }
+
+    // ==================== AUTH HANDLERS ====================
+    function openAuthModal() {
+      document.getElementById('auth-modal').className = 'modal-backdrop open';
+      const isAuthed = Boolean(auth && auth.currentUser);
+      document.getElementById('modal-unauthed').style.display = isAuthed ? 'none' : 'block';
+      document.getElementById('modal-authed').style.display = isAuthed ? 'block' : 'none';
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').className = 'modal-backdrop';
+    }
+
+    function handleLogin() {
+      const pass = document.getElementById('auth-pass').value;
+      const errEl = document.getElementById('auth-error');
+      if (!pass) return;
+      errEl.style.display = 'none';
+
+      auth.signInWithEmailAndPassword(FIXED_USER_EMAIL, pass)
+        .then(() => {
+          closeAuthModal();
+          showToast("🌸 Đã kết nối đồng bộ đám mây của Diễm!");
+        })
+        .catch(() => {
+          errEl.textContent = "Mật khẩu chưa đúng, hãy thử lại nhé!";
+          errEl.style.display = 'block';
+        });
+    }
+
+    function handleLogout() {
+      if (auth) auth.signOut().then(() => closeAuthModal());
+    }
+
+    if (isFirebaseInit && auth) {
+      auth.onAuthStateChanged(user => {
+        const badge = document.getElementById('sync-badge');
+        const text = document.getElementById('sync-text');
+        if (user) {
+          badge.className = 'badge-sync';
+          text.textContent = '☁️ Đã đồng bộ';
+          diemRef.on('value', snap => {
+            const cloud = snap.val() || {};
+            const local = getHistory();
+            const merged = { ...local, ...cloud };
+            saveHistory(merged);
+            renderAll();
+          });
+        } else {
+          badge.className = 'badge-sync unauthed';
+          text.textContent = '🔒 Đăng nhập Sync';
+          if (diemRef) diemRef.off();
+        }
+      });
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
