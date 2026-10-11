@@ -1109,43 +1109,27 @@
 
   </div>
 
-  <!-- Auth Modal -->
+  <!-- Cloud Status Modal -->
   <div class="modal-backdrop" id="auth-modal" onclick="if(event.target.id==='auth-modal') closeAuthModal()">
     <div class="modal-card">
-      <div id="modal-unauthed">
-        <h3 style="font-size: 17px; color: #fff;">☁️ Đồng bộ Đám mây (iPhone ⇄ Mac)</h3>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 4px;">
-          App đã bật sẵn <strong>Live Stream Tự Động</strong>! Bạn có thể nhập thêm mật khẩu Firebase (giống bên Elite Roadmap) để sao lưu kép an toàn.
-        </p>
-        <div class="fixed-account-card" style="margin-top: 12px;">
-          <span style="font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Tài khoản của Diễm</span>
-          <div style="font-size: 14px; font-weight: 700; color: #38bdf8; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
-            🍀 diembd.dev@gmail.com
-          </div>
-        </div>
-        <div class="input-group" style="margin-top: 12px;">
-          <input type="password" id="auth-pass" placeholder="Nhập mật khẩu (tùy chọn)..." onkeydown="if(event.key==='Enter') handleLogin()">
-        </div>
-        <div id="auth-error" style="display:none; font-size: 12px; color: #f87171; margin-top: 8px;"></div>
-        <div class="modal-actions" style="margin-top: 14px;">
-          <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
-          <button class="btn-primary" onclick="handleLogin()">Đăng Nhập Firebase</button>
-        </div>
-      </div>
-
-      <div id="modal-authed" style="display: none;">
-        <h3 style="font-size: 17px; color: #fff;">🍀 Đã Kết Nối Đám Mây Kép</h3>
+      <div id="modal-authed">
+        <h3 style="font-size: 17px; color: #fff;">🍀 Đám Mây Riêng Của Diễm (100% Độc Lập)</h3>
         <div class="fixed-account-card" style="margin-top: 10px;">
-          <div style="font-size: 14px; font-weight: 700; color: #34d399; font-family: 'JetBrains Mono', monospace;">
+          <span style="font-size: 10.5px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Firebase Realtime Database Riêng</span>
+          <div style="font-size: 13.5px; font-weight: 700; color: #34d399; font-family: 'JetBrains Mono', monospace; margin-top: 3px;">
+            ☁️ project: diem-habits (asia-southeast1)
+          </div>
+          <div style="font-size: 12px; color: #38bdf8; font-family: 'JetBrains Mono', monospace; margin-top: 2px;">
             🍀 diembd.dev@gmail.com
           </div>
         </div>
-        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 10px;">
-          ✓ Dữ liệu của bạn đang được đồng bộ tức thì giữa iPhone & MacBook qua cả Live Stream lẫn Firebase Cloud!
+        <p style="font-size: 12.5px; color: var(--text-muted); margin-top: 10px; line-height: 1.45;">
+          ✓ Đã ngắt hoàn toàn khỏi Firebase cũ và kết nối trực tiếp vào <strong>Firebase riêng của Diễm</strong>.<br>
+          ✓ Tự động đồng bộ 2 chiều thời gian thực giữa iPhone & MacBook ngay khi mở App mà không cần đăng nhập lại!
         </p>
         <div class="modal-actions" style="margin-top: 14px;">
+          <button class="btn-primary" onclick="forcePushAllToCloud()">🔄 Đồng bộ ngay lên Cloud</button>
           <button class="btn-secondary" onclick="closeAuthModal()">Đóng</button>
-          <button class="btn-secondary" style="color:#94a3b8;" onclick="handleLogout()">Đăng Xuất</button>
         </div>
       </div>
     </div>
@@ -1154,37 +1138,35 @@
   <div id="toast">Thông báo</div>
 
   <script>
-    // ==================== DUAL-ENGINE REALTIME SYNC (LIVE STREAM + FIREBASE) ====================
+    // ==================== DUAL-ENGINE REALTIME SYNC (LIVE STREAM + DIEM'S OWN FIREBASE) ====================
     const LIVE_TOPIC = "diem_daily_flow_sync_2004_clover_v2";
     const LIVE_URL = `https://ntfy.sh/${LIVE_TOPIC}`;
     const LIVE_SSE = `https://ntfy.sh/${LIVE_TOPIC}/sse`;
     const DEVICE_ID = "dev_" + Math.random().toString(36).slice(2, 9);
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBfj1pBg6Px0pUhERNuRxzPJCqwL9h0G1k",
-      authDomain: "my-habits-bbe5b.firebaseapp.com",
-      databaseURL: "https://my-habits-bbe5b-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "my-habits-bbe5b",
-      storageBucket: "my-habits-bbe5b.firebasestorage.app",
-      messagingSenderId: "46496314879",
-      appId: "1:46496314879:web:0011dad743b74200f423ca"
+      apiKey: "AIzaSyDcDh4nZRxdJ9rOeBNzHPMVhcQZNp-yFpQ",
+      authDomain: "diem-habits.firebaseapp.com",
+      databaseURL: "https://diem-habits-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "diem-habits",
+      storageBucket: "diem-habits.firebasestorage.app",
+      messagingSenderId: "218375077024",
+      appId: "1:218375077024:web:91b3ad8b62ec4d253f1dc5",
+      measurementId: "G-2MY34DE0BY"
     };
 
     const FIXED_USER_EMAIL = "diembd.dev@gmail.com";
     const STORAGE_KEY = "diem_daily_flow_v1";
 
-    let auth = null;
     let db = null;
     let diemRef = null;
     let isFirebaseInit = false;
 
     try {
       firebase.initializeApp(firebaseConfig);
-      auth = firebase.auth();
       db = firebase.database();
-      diemRef = db.ref('habits_vault_history/diem_daily_flow');
+      diemRef = db.ref('diem_daily_flow/history');
       isFirebaseInit = true;
-      auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     } catch (e) {
       console.warn("Firebase notice:", e);
     }
@@ -1891,57 +1873,65 @@
       } catch (e) {}
     }
 
-    // ==================== AUTH HANDLERS ====================
+    // ==================== CLOUD MODAL & AUTO FIREBASE SYNC ====================
     function openAuthModal() {
       document.getElementById('auth-modal').className = 'modal-backdrop open';
-      const isAuthed = Boolean(auth && auth.currentUser);
-      document.getElementById('modal-unauthed').style.display = isAuthed ? 'none' : 'block';
-      document.getElementById('modal-authed').style.display = isAuthed ? 'block' : 'none';
     }
 
     function closeAuthModal() {
       document.getElementById('auth-modal').className = 'modal-backdrop';
     }
 
-    function handleLogin() {
-      const pass = document.getElementById('auth-pass').value;
-      const errEl = document.getElementById('auth-error');
-      if (!pass) return;
-      errEl.style.display = 'none';
-
-      auth.signInWithEmailAndPassword(FIXED_USER_EMAIL, pass)
-        .then(() => {
-          closeAuthModal();
-          showToast("🍀 Đã kết nối đồng bộ đám mây của Diễm!");
-        })
-        .catch(() => {
-          errEl.textContent = "Mật khẩu chưa đúng, hãy thử lại nhé!";
-          errEl.style.display = 'block';
-        });
-    }
-
-    function handleLogout() {
-      if (auth) auth.signOut().then(() => closeAuthModal());
-    }
-
-    if (isFirebaseInit && auth) {
-      auth.onAuthStateChanged(user => {
-        const text = document.getElementById('sync-text');
-        if (user) {
-          text.textContent = '☁️ Cloud + Live Sync';
-          diemRef.on('value', snap => {
-            const cloud = snap.val() || {};
-            const local = getHistory();
-            const merged = { ...local, ...cloud };
-            saveHistory(merged);
-            renderAll(true);
+    function forcePushAllToCloud() {
+      const local = getHistory();
+      if (isFirebaseInit && diemRef) {
+        diemRef.update(local)
+          .then(() => {
+            closeAuthModal();
+            showToast("🍀 Đã đẩy toàn bộ lịch sử lên Firebase của Diễm!");
+          })
+          .catch(() => {
+            showToast("⚠️ Không thể kết nối Cloud lúc này");
           });
-        } else {
-          text.textContent = '☁️ Live Sync Bật';
+      }
+    }
+
+    function initDedicatedFirebaseSync() {
+      if (!isFirebaseInit || !diemRef) return;
+      const text = document.getElementById('sync-text');
+      if (text) text.textContent = '☁️ Cloud Riêng Bật';
+
+      // Push any existing local history to Diễm's new Firebase on startup so nothing is lost
+      const initialLocal = getHistory();
+      if (Object.keys(initialLocal).length > 0) {
+        diemRef.update(initialLocal).catch(() => {});
+      }
+
+      // Listen for realtime changes across devices (iPhone <-> Mac)
+      diemRef.on('value', snap => {
+        const cloud = snap.val() || {};
+        const local = getHistory();
+        let changed = false;
+
+        Object.keys(cloud).forEach(k => {
+          const remoteDay = cloud[k];
+          const localDay = local[k];
+          if (!localDay || (remoteDay.updatedAt || 0) >= (localDay.updatedAt || 0)) {
+            if (JSON.stringify(localDay) !== JSON.stringify(remoteDay)) {
+              local[k] = remoteDay;
+              changed = true;
+            }
+          }
+        });
+
+        if (changed) {
+          saveHistory(local);
+          renderAll(true);
         }
       });
     }
 
+    initDedicatedFirebaseSync();
     initLiveSync();
     renderAll();
     setInterval(checkDayRollover, 30000);
