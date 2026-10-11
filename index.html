@@ -1317,7 +1317,9 @@
       return history[dateKey];
     }
 
+    const FIREBASE_REST_BASE = "https://diem-habits-default-rtdb.asia-southeast1.firebasedatabase.app/diem_daily_flow/history";
     let vocabSyncTimer = null;
+
     function broadcastLiveSync(dateKey, dayObj) {
       const payload = {
         sender: DEVICE_ID,
@@ -1329,6 +1331,13 @@
       fetch(LIVE_URL, {
         method: 'POST',
         body: JSON.stringify(payload)
+      }).catch(() => {});
+
+      // Direct REST write to Diễm's Firebase (works even when browser tracking protection blocks SDK)
+      fetch(`${FIREBASE_REST_BASE}/${encodeURIComponent(dateKey)}.json`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dayObj)
       }).catch(() => {});
 
       if (isFirebaseInit && diemRef) {
@@ -1884,51 +1893,72 @@
 
     function forcePushAllToCloud() {
       const local = getHistory();
+      fetch(`${FIREBASE_REST_BASE}.json`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(local)
+      })
+        .then(() => {
+          closeAuthModal();
+          showToast("🍀 Đã đẩy toàn bộ lịch sử lên Firebase của Diễm!");
+        })
+        .catch(() => {
+          showToast("⚠️ Không thể kết nối Cloud lúc này");
+        });
+
       if (isFirebaseInit && diemRef) {
-        diemRef.update(local)
-          .then(() => {
-            closeAuthModal();
-            showToast("🍀 Đã đẩy toàn bộ lịch sử lên Firebase của Diễm!");
-          })
-          .catch(() => {
-            showToast("⚠️ Không thể kết nối Cloud lúc này");
-          });
+        diemRef.update(local).catch(() => {});
+      }
+    }
+
+    function mergeCloudHistory(cloud) {
+      if (!cloud || typeof cloud !== 'object') return;
+      const local = getHistory();
+      let changed = false;
+
+      Object.keys(cloud).forEach(k => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+        const remoteDay = cloud[k];
+        if (!remoteDay || typeof remoteDay !== 'object') return;
+        const localDay = local[k];
+        if (!localDay || (remoteDay.updatedAt || 0) >= (localDay.updatedAt || 0)) {
+          if (JSON.stringify(localDay) !== JSON.stringify(remoteDay)) {
+            local[k] = remoteDay;
+            changed = true;
+          }
+        }
+      });
+
+      if (changed) {
+        saveHistory(local);
+        renderAll(true);
       }
     }
 
     function initDedicatedFirebaseSync() {
-      if (!isFirebaseInit || !diemRef) return;
       const text = document.getElementById('sync-text');
       if (text) text.textContent = '☁️ Cloud Riêng Bật';
 
-      // Push any existing local history to Diễm's new Firebase on startup so nothing is lost
+      // Push any existing local history via REST & pull latest from Diễm's Firebase
       const initialLocal = getHistory();
       if (Object.keys(initialLocal).length > 0) {
-        diemRef.update(initialLocal).catch(() => {});
+        fetch(`${FIREBASE_REST_BASE}.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(initialLocal)
+        }).catch(() => {});
       }
 
-      // Listen for realtime changes across devices (iPhone <-> Mac)
-      diemRef.on('value', snap => {
-        const cloud = snap.val() || {};
-        const local = getHistory();
-        let changed = false;
+      fetch(`${FIREBASE_REST_BASE}.json`)
+        .then(r => r.json())
+        .then(cloud => mergeCloudHistory(cloud))
+        .catch(() => {});
 
-        Object.keys(cloud).forEach(k => {
-          const remoteDay = cloud[k];
-          const localDay = local[k];
-          if (!localDay || (remoteDay.updatedAt || 0) >= (localDay.updatedAt || 0)) {
-            if (JSON.stringify(localDay) !== JSON.stringify(remoteDay)) {
-              local[k] = remoteDay;
-              changed = true;
-            }
-          }
+      if (isFirebaseInit && diemRef) {
+        diemRef.on('value', snap => {
+          mergeCloudHistory(snap.val() || {});
         });
-
-        if (changed) {
-          saveHistory(local);
-          renderAll(true);
-        }
-      });
+      }
     }
 
     initDedicatedFirebaseSync();
