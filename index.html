@@ -473,7 +473,7 @@
       color: var(--accent-clover-light);
     }
 
-    /* Sleek Collapsible Add Custom Task Drawer */
+    /* Sleek Collapsible Add Custom Task Drawer with Native Time Picker */
     .add-task-drawer {
       display: none;
       gap: 8px;
@@ -489,28 +489,48 @@
       display: flex;
     }
 
-    .add-task-time-input {
-      width: 95px;
-      background: rgba(7, 14, 23, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.22);
+    .time-picker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(7, 14, 23, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 16px;
+      padding: 5px 9px;
+    }
+
+    .time-picker-label {
+      font-size: 11.5px;
       color: var(--accent-water);
+      font-weight: 700;
+    }
+
+    .add-task-time-input {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
       font-family: 'JetBrains Mono', monospace;
       outline: none;
+      color-scheme: dark;
+      cursor: pointer;
     }
 
     .add-task-title-input {
       flex: 1;
       min-width: 160px;
-      background: rgba(7, 14, 23, 0.8);
-      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(7, 14, 23, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.25);
       border-radius: 8px;
       padding: 8px 12px;
       font-size: 16px;
       color: #fff;
       outline: none;
+    }
+
+    .add-task-title-input:focus {
+      border-color: var(--accent-clover-light);
     }
 
     .add-task-submit-btn {
@@ -540,6 +560,7 @@
 
     .task-item.is-custom-task {
       border-left: 3px solid var(--accent-clover-light);
+      background: rgba(16, 185, 129, 0.035);
     }
 
     .task-item.completed {
@@ -923,15 +944,18 @@
         </div>
       </div>
 
-      <!-- Collapsible Add Custom Task Bar (Hidden by default to keep UI super clean) -->
+      <!-- Collapsible Add Custom Task Bar with Native Time Picker -->
       <div class="add-task-drawer" id="add-task-drawer">
-        <input type="text" id="custom-task-time" class="add-task-time-input" placeholder="Giờ (Tùy ý)">
-        <input type="text" id="custom-task-title" class="add-task-title-input" placeholder="Nhập việc phát sinh trong ngày..." onkeydown="if(event.key==='Enter') addCustomTask()">
-        <button class="add-task-submit-btn" onclick="addCustomTask()">Thêm</button>
+        <div class="time-picker-wrap">
+          <span class="time-picker-label">⏰ Chọn giờ:</span>
+          <input type="time" id="custom-task-time" class="add-task-time-input" value="07:30">
+        </div>
+        <input type="text" id="custom-task-title" class="add-task-title-input" placeholder="Nhập việc cần làm (VD: Thiền, Nộp bài...)" onkeydown="if(event.key==='Enter') addCustomTask()">
+        <button class="add-task-submit-btn" onclick="addCustomTask()">Thêm vào lịch</button>
       </div>
 
       <div id="tasks-container" style="display: flex; flex-direction: column; gap: 8px;">
-        <!-- Injected by JS -->
+        <!-- Injected & Chronologically Sorted by JS -->
       </div>
     </div>
 
@@ -1073,20 +1097,37 @@
 
       if (mode === 'light') {
         return [
-          { time: "07:00", cat: "Giấc ngủ", title: "Dậy đúng giờ (07:00) & Uống 1 cốc nước ấm", desc: "Chế độ Mức Sàn: Chỉ cần dậy đúng giờ là đã thắng 50% ngày hôm nay." },
-          { time: "45 - 60p", cat: "DaVinci Nén", title: "Mở DaVinci Resolve thực hành tối thiểu 45 phút", desc: "Làm 1 bước nhỏ trong Task hiện tại trên Elite Roadmap để giữ cảm giác tay Q-W-E." },
-          { time: "16:30", cat: "Vận động", title: "Đi bộ nhanh / Chạy bộ nhẹ 15 – 20 phút", desc: "Bước ra ngoài hít thở, vận động nhẹ nhàng để cơ thể khỏe khoắn, không trì trệ." },
-          { time: "22:45", cat: "Tiếng Anh & Ngủ", title: "Ghi 3 từ Tiếng Anh bên dưới & Lên giường trước 23:00", desc: "Gõ nhanh 3 từ gặp trong video và đi ngủ sớm nạp năng lượng cho ngày mai." }
+          { time: "07:00", sortMinutes: 7 * 60, cat: "Giấc ngủ", title: "Dậy đúng giờ (07:00) & Uống 1 cốc nước ấm", desc: "Chế độ Mức Sàn: Chỉ cần dậy đúng giờ là đã thắng 50% ngày hôm nay." },
+          { time: "08:30 (45-60p)", sortMinutes: 8 * 60 + 30, cat: "DaVinci Nén", title: "Mở DaVinci Resolve thực hành tối thiểu 45 phút", desc: "Làm 1 bước nhỏ trong Task hiện tại trên Elite Roadmap để giữ cảm giác tay Q-W-E." },
+          { time: "16:30", sortMinutes: 16 * 60 + 30, cat: "Vận động", title: "Đi bộ nhanh / Chạy bộ nhẹ 15 – 20 phút", desc: "Bước ra ngoài hít thở, vận động nhẹ nhàng để cơ thể khỏe khoắn, không trì trệ." },
+          { time: "22:45", sortMinutes: 22 * 60 + 45, cat: "Tiếng Anh & Ngủ", title: "Ghi 3 từ Tiếng Anh bên dưới & Lên giường trước 23:00", desc: "Gõ nhanh 3 từ gặp trong video và đi ngủ sớm nạp năng lượng cho ngày mai." }
         ];
       }
 
       return [
-        { time: "07:00", cat: "Khởi động", title: "Thức dậy đúng giờ, uống nước ấm & ăn sáng", desc: "Bắt đầu ngày mới thong thả, tỉnh táo, không nằm nướng lướt điện thoại." },
-        { time: "08:30 - 10:30", cat: "Ca Vàng 1", title: "🌊 Ca Vàng DaVinci Sáng (2 tiếng tập trung sâu)", desc: "Lúc não sáng suốt nhất: Mở Elite Roadmap làm nhiệm vụ trọng tâm của Sprint." },
-        { time: "14:00 - 15:30", cat: "Ca Vàng 2", title: "🎬 Thực hành DaVinci Chiều + Nhặt 3 từ Tiếng Anh", desc: "Hoàn thiện tiếp bài dựng buổi sáng và ghi lại 3 từ tiếng Anh gặp trong video xuống sổ bên dưới." },
-        { time: "16:30 - 17:00", cat: "Thể chất", title: "🏃 Chạy bộ / Tập thể dục 20 – 30 phút", desc: "Rũ bỏ mỏi mệt, bơm oxy lên não trước khi tắm rửa ăn tối." },
-        { time: "18:00 - 22:45", cat: "Trường & Ngủ", title: `🎓 ${sched.schoolTaskTitle} + Ngủ trước 23:00`, desc: sched.schoolTaskDesc }
+        { time: "07:00", sortMinutes: 7 * 60, cat: "Khởi động", title: "Thức dậy đúng giờ, uống nước ấm & ăn sáng", desc: "Bắt đầu ngày mới thong thả, tỉnh táo, không nằm nướng lướt điện thoại." },
+        { time: "08:30 - 10:30", sortMinutes: 8 * 60 + 30, cat: "Ca Vàng 1", title: "🌊 Ca Vàng DaVinci Sáng (2 tiếng tập trung sâu)", desc: "Lúc não sáng suốt nhất: Mở Elite Roadmap làm nhiệm vụ trọng tâm của Sprint." },
+        { time: "14:00 - 15:30", sortMinutes: 14 * 60, cat: "Ca Vàng 2", title: "🎬 Thực hành DaVinci Chiều + Nhặt 3 từ Tiếng Anh", desc: "Hoàn thiện tiếp bài dựng buổi sáng và ghi lại 3 từ tiếng Anh gặp trong video xuống sổ bên dưới." },
+        { time: "16:30 - 17:00", sortMinutes: 16 * 60 + 30, cat: "Thể chất", title: "🏃 Chạy bộ / Tập thể dục 20 – 30 phút", desc: "Rũ bỏ mỏi mệt, bơm oxy lên não trước khi tắm rửa ăn tối." },
+        { time: "18:00 - 22:45", sortMinutes: 18 * 60, cat: "Trường & Ngủ", title: `🎓 ${sched.schoolTaskTitle} + Ngủ trước 23:00`, desc: sched.schoolTaskDesc }
       ];
+    }
+
+    /**
+     * Parse any time string (e.g. "07:30", "8h15", "14:00 - 15:30") into minutes from 00:00
+     * so custom tasks automatically insert into the exact chronological position!
+     */
+    function parseTimeToMinutes(timeStr) {
+      if (!timeStr) return 23 * 60 + 59;
+      const match = String(timeStr).match(/(\d{1,2})\s*[:hH]\s*(\d{1,2})/);
+      if (match) {
+        const hh = parseInt(match[1], 10);
+        const mm = parseInt(match[2], 10);
+        if (!isNaN(hh) && !isNaN(mm)) {
+          return hh * 60 + mm;
+        }
+      }
+      return 23 * 60 + 59;
     }
 
     // ==================== DATE & STORAGE ====================
@@ -1200,7 +1241,7 @@
       const timeInput = document.getElementById('custom-task-time');
       const titleInput = document.getElementById('custom-task-title');
       const title = (titleInput.value || '').trim();
-      const time = (timeInput.value || '').trim() || 'Hôm nay';
+      const time = (timeInput.value || '').trim() || '08:00';
 
       if (!title) {
         showToast("Hãy nhập tên việc cần làm nhé!");
@@ -1216,13 +1257,12 @@
         done: false
       });
 
-      timeInput.value = '';
       titleInput.value = '';
       document.getElementById('add-task-drawer').classList.remove('open');
 
       updateDayData(viewedDateKey, { customTasks });
       renderAll();
-      showToast("🍀 Đã thêm việc mới cho ngày này!");
+      showToast(`🍀 Đã chèn "${title}" vào mốc ${time}!`);
     }
 
     function toggleCustomTask(taskId) {
@@ -1318,7 +1358,7 @@
       }
     }
 
-    // ==================== UI RENDERING ====================
+    // ==================== UI RENDERING (CHRONOLOGICALLY SORTED) ====================
     function renderAll(skipVocabFocus = false) {
       todayDateKey = getBiologicalToday();
       const isToday = (viewedDateKey === todayDateKey);
@@ -1344,70 +1384,96 @@
       document.getElementById('mode-display-name').textContent = mode === 'standard' ? 'Ngày Năng Lượng' : 'Mức Sàn Chống Ngộp';
       document.getElementById('mode-display-name').style.color = mode === 'standard' ? 'var(--accent-water)' : 'var(--accent-clover-light)';
 
-      const tasks = getTasksForDate(viewedDateKey, mode);
+      const baseTasks = getTasksForDate(viewedDateKey, mode);
       const customTasks = dayData.customTasks || [];
       const container = document.getElementById('tasks-container');
       container.innerHTML = '';
 
-      let doneCount = 0;
-      const totalTasksCount = tasks.length + customTasks.length;
+      // Combine baseTasks and customTasks into a unified array and sort chronologically!
+      const combinedList = [];
 
-      // Render Default Tasks
-      tasks.forEach((t, idx) => {
+      baseTasks.forEach((t, idx) => {
         const key = `${mode}_${idx}`;
         const isDone = Boolean(dayData.checked && dayData.checked[key]);
-        if (isDone) doneCount++;
-
-        const row = document.createElement('div');
-        row.className = `task-item ${isDone ? 'completed' : ''}`;
-        row.onclick = () => {
-          const cur = getDayData(viewedDateKey);
-          const checked = { ...(cur.checked || {}) };
-          checked[key] = !checked[key];
-          updateDayData(viewedDateKey, { checked });
-          renderAll();
-        };
-
-        row.innerHTML = `
-          <div class="checkbox-custom">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </div>
-          <div class="task-info">
-            <div class="task-meta">
-              <span class="task-time">${t.time}</span>
-              <span class="task-category">${t.cat}</span>
-            </div>
-            <div class="task-title">${t.title}</div>
-            <div class="task-desc">${t.desc}</div>
-          </div>
-        `;
-        container.appendChild(row);
+        combinedList.push({
+          isCustom: false,
+          key: key,
+          time: t.time,
+          sortMinutes: t.sortMinutes !== undefined ? t.sortMinutes : parseTimeToMinutes(t.time),
+          cat: t.cat,
+          title: t.title,
+          desc: t.desc,
+          done: isDone
+        });
       });
 
-      // Render Custom Added Tasks for this day
       customTasks.forEach(ct => {
-        if (ct.done) doneCount++;
-        const row = document.createElement('div');
-        row.className = `task-item is-custom-task ${ct.done ? 'completed' : ''}`;
-        row.onclick = () => toggleCustomTask(ct.id);
+        combinedList.push({
+          isCustom: true,
+          id: ct.id,
+          time: ct.time,
+          sortMinutes: parseTimeToMinutes(ct.time),
+          cat: '🍀 Việc Thêm Riêng',
+          title: ct.title,
+          desc: '',
+          done: Boolean(ct.done)
+        });
+      });
 
-        row.innerHTML = `
-          <div class="checkbox-custom">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
-              <polyline points="20 6 9 17 4 12"></polyline>
-            </svg>
-          </div>
-          <div class="task-info">
-            <div class="task-meta">
-              <span class="task-time">${ct.time}</span>
-              <span class="task-category">🍀 Việc Thêm Riêng</span>
+      // Sort by time of day (minutes from midnight)
+      combinedList.sort((a, b) => a.sortMinutes - b.sortMinutes);
+
+      let doneCount = 0;
+      const totalTasksCount = combinedList.length;
+
+      combinedList.forEach(item => {
+        if (item.done) doneCount++;
+
+        const row = document.createElement('div');
+        row.className = `task-item ${item.isCustom ? 'is-custom-task' : ''} ${item.done ? 'completed' : ''}`;
+
+        if (item.isCustom) {
+          row.onclick = () => toggleCustomTask(item.id);
+          row.innerHTML = `
+            <div class="checkbox-custom">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
             </div>
-            <div class="task-title">${ct.title}</div>
-          </div>
-          <button class="delete-custom-btn" onclick="deleteCustomTask('${ct.id}', event)" title="Xoá việc này">✕</button>
-        `;
+            <div class="task-info">
+              <div class="task-meta">
+                <span class="task-time">${item.time}</span>
+                <span class="task-category">${item.cat}</span>
+              </div>
+              <div class="task-title">${item.title}</div>
+            </div>
+            <button class="delete-custom-btn" onclick="deleteCustomTask('${item.id}', event)" title="Xoá việc này">✕</button>
+          `;
+        } else {
+          row.onclick = () => {
+            const cur = getDayData(viewedDateKey);
+            const checked = { ...(cur.checked || {}) };
+            checked[item.key] = !checked[item.key];
+            updateDayData(viewedDateKey, { checked });
+            renderAll();
+          };
+          row.innerHTML = `
+            <div class="checkbox-custom">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="task-info">
+              <div class="task-meta">
+                <span class="task-time">${item.time}</span>
+                <span class="task-category">${item.cat}</span>
+              </div>
+              <div class="task-title">${item.title}</div>
+              <div class="task-desc">${item.desc}</div>
+            </div>
+          `;
+        }
+
         container.appendChild(row);
       });
 
