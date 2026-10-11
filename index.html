@@ -25,9 +25,6 @@
   <style>
     /* ==========================================================================
        PHONG THỦY BẢN MỆNH: GIÁP THÂN (23/08/2004) - TUYỀN TRUNG THỦY (NƯỚC SUỐI NGUỒN)
-       - Hành Thủy (Bản mệnh): Xanh Lam Đại Dương (#38bdf8, #0ea5e9)
-       - Hành Kim (Tương sinh - Kim sinh Thủy): Trắng Bạc Ánh Kim (#f8fafc, #cbd5e1)
-       - Cỏ 4 Lá (Sinh khí suối nguồn): Xanh Ngọc Lục Bảo (#10b981, #34d399)
        ========================================================================== */
     :root {
       --bg-dark: #070e17;
@@ -171,9 +168,7 @@
       gap: 4px;
     }
 
-    /* ==========================================================================
-       COMPACT 7-DAY WEEK STRIP (THANH LỊCH TUẦN GIỮ CHUỖI)
-       ========================================================================== */
+    /* Compact 7-Day Week Strip */
     .week-card {
       background: var(--card-bg);
       border: 1px solid var(--card-border);
@@ -240,34 +235,25 @@
       gap: 4px;
       cursor: pointer;
       transition: all 0.2s ease;
-      position: relative;
       user-select: none;
     }
 
-    .day-pill:hover {
-      background: rgba(255, 255, 255, 0.07);
-    }
-
-    /* Ngày đang chọn xem */
     .day-pill.is-selected {
       border-color: var(--accent-water);
       background: rgba(56, 189, 248, 0.12);
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
     }
 
-    /* Ngày hôm nay */
     .day-pill.is-today .day-name {
       color: var(--accent-water);
       font-weight: 800;
     }
 
-    /* Ngày đã giữ chuỗi (có hoàn thành ít nhất 1 việc) */
     .day-pill.streak-partial {
       background: rgba(56, 189, 248, 0.09);
       border-color: rgba(56, 189, 248, 0.35);
     }
 
-    /* Ngày hoàn thành xuất sắc 100% */
     .day-pill.streak-full {
       background: linear-gradient(180deg, rgba(16, 185, 129, 0.18) 0%, rgba(16, 185, 129, 0.06) 100%);
       border-color: rgba(52, 211, 153, 0.5);
@@ -463,14 +449,78 @@
       color: var(--accent-silver);
     }
 
+    .header-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .action-btn {
       background: rgba(56, 189, 248, 0.1);
       border: 1px solid rgba(56, 189, 248, 0.28);
       color: var(--accent-water);
-      padding: 5px 11px;
+      padding: 5px 10px;
       border-radius: 8px;
       font-size: 11.5px;
       font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .action-btn.btn-add-task {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: var(--accent-clover-light);
+    }
+
+    /* Sleek Collapsible Add Custom Task Drawer */
+    .add-task-drawer {
+      display: none;
+      gap: 8px;
+      padding: 10px;
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px dashed rgba(52, 211, 153, 0.35);
+      border-radius: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .add-task-drawer.open {
+      display: flex;
+    }
+
+    .add-task-time-input {
+      width: 95px;
+      background: rgba(7, 14, 23, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 16px;
+      color: var(--accent-water);
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+    }
+
+    .add-task-title-input {
+      flex: 1;
+      min-width: 160px;
+      background: rgba(7, 14, 23, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 16px;
+      color: #fff;
+      outline: none;
+    }
+
+    .add-task-submit-btn {
+      background: linear-gradient(135deg, #10b981, #38bdf8);
+      border: none;
+      color: #070e17;
+      font-weight: 800;
+      font-size: 12.5px;
+      padding: 9px 14px;
+      border-radius: 8px;
       cursor: pointer;
       white-space: nowrap;
     }
@@ -486,6 +536,10 @@
       cursor: pointer;
       transition: all 0.2s ease;
       user-select: none;
+    }
+
+    .task-item.is-custom-task {
+      border-left: 3px solid var(--accent-clover-light);
     }
 
     .task-item.completed {
@@ -570,9 +624,28 @@
       word-break: break-word;
     }
 
-    /* ==========================================================================
-       ENGLISH 3-WORDS VAULT (RESPONSIVE IPHONE FIX - NO OVERFLOW, NO AUTO-ZOOM)
-       ========================================================================== */
+    .delete-custom-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-dim);
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .delete-custom-btn:hover {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    /* English 3-Words Vault */
     .vocab-grid {
       display: flex;
       flex-direction: column;
@@ -840,9 +913,21 @@
         <div class="card-title">
           <span>🍀</span> Checklist Trong Ngày
         </div>
-        <button class="action-btn" onclick="copyObsidianMarkdown()">
-          📋 Copy sang Obsidian
-        </button>
+        <div class="header-actions-group">
+          <button class="action-btn btn-add-task" onclick="toggleAddTaskDrawer()" title="Thêm việc phát sinh riêng cho ngày này">
+            ➕ Thêm việc
+          </button>
+          <button class="action-btn" onclick="copyObsidianMarkdown()">
+            📋 Copy Obsidian
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Add Custom Task Bar (Hidden by default to keep UI super clean) -->
+      <div class="add-task-drawer" id="add-task-drawer">
+        <input type="text" id="custom-task-time" class="add-task-time-input" placeholder="Giờ (Tùy ý)">
+        <input type="text" id="custom-task-title" class="add-task-title-input" placeholder="Nhập việc phát sinh trong ngày..." onkeydown="if(event.key==='Enter') addCustomTask()">
+        <button class="add-task-submit-btn" onclick="addCustomTask()">Thêm</button>
       </div>
 
       <div id="tasks-container" style="display: flex; flex-direction: column; gap: 8px;">
@@ -911,13 +996,11 @@
 
   <script>
     // ==================== DUAL-ENGINE REALTIME SYNC (LIVE STREAM + FIREBASE) ====================
-    // 1. Live Stream Engine (Tự động đồng bộ iPhone ⇄ MacBook ngay lập tức không cần đăng nhập!)
     const LIVE_TOPIC = "diem_daily_flow_sync_2004_clover_v2";
     const LIVE_URL = `https://ntfy.sh/${LIVE_TOPIC}`;
     const LIVE_SSE = `https://ntfy.sh/${LIVE_TOPIC}/sse`;
     const DEVICE_ID = "dev_" + Math.random().toString(36).slice(2, 9);
 
-    // 2. Firebase Cloud Backup
     const firebaseConfig = {
       apiKey: "AIzaSyBfj1pBg6Px0pUhERNuRxzPJCqwL9h0G1k",
       authDomain: "my-habits-bbe5b.firebaseapp.com",
@@ -1048,6 +1131,7 @@
         history[dateKey] = {
           mode: defaultMode,
           checked: {},
+          customTasks: [],
           vocab: [
             { en: "", vi: "" },
             { en: "", vi: "" },
@@ -1058,6 +1142,9 @@
       }
       if (!history[dateKey].vocab) {
         history[dateKey].vocab = [{ en: "", vi: "" }, { en: "", vi: "" }, { en: "", vi: "" }];
+      }
+      if (!Array.isArray(history[dateKey].customTasks)) {
+        history[dateKey].customTasks = [];
       }
       return history[dateKey];
     }
@@ -1097,11 +1184,71 @@
       }
     }
 
+    // ==================== CUSTOM TASKS PER DAY (ON-DEMAND, CLEAN UI) ====================
+    function toggleAddTaskDrawer() {
+      const drawer = document.getElementById('add-task-drawer');
+      const isOpen = drawer.classList.toggle('open');
+      if (isOpen) {
+        setTimeout(() => {
+          const input = document.getElementById('custom-task-title');
+          if (input) input.focus();
+        }, 80);
+      }
+    }
+
+    function addCustomTask() {
+      const timeInput = document.getElementById('custom-task-time');
+      const titleInput = document.getElementById('custom-task-title');
+      const title = (titleInput.value || '').trim();
+      const time = (timeInput.value || '').trim() || 'Hôm nay';
+
+      if (!title) {
+        showToast("Hãy nhập tên việc cần làm nhé!");
+        return;
+      }
+
+      const dayData = getDayData(viewedDateKey);
+      const customTasks = [...(dayData.customTasks || [])];
+      customTasks.push({
+        id: 'ct_' + Date.now(),
+        time: time,
+        title: title,
+        done: false
+      });
+
+      timeInput.value = '';
+      titleInput.value = '';
+      document.getElementById('add-task-drawer').classList.remove('open');
+
+      updateDayData(viewedDateKey, { customTasks });
+      renderAll();
+      showToast("🍀 Đã thêm việc mới cho ngày này!");
+    }
+
+    function toggleCustomTask(taskId) {
+      const dayData = getDayData(viewedDateKey);
+      const customTasks = (dayData.customTasks || []).map(ct => {
+        if (ct.id === taskId) return { ...ct, done: !ct.done };
+        return ct;
+      });
+      updateDayData(viewedDateKey, { customTasks });
+      renderAll();
+    }
+
+    function deleteCustomTask(taskId, e) {
+      if (e) e.stopPropagation();
+      const dayData = getDayData(viewedDateKey);
+      const customTasks = (dayData.customTasks || []).filter(ct => ct.id !== taskId);
+      updateDayData(viewedDateKey, { customTasks });
+      renderAll();
+      showToast("Đã xoá việc phát sinh");
+    }
+
     // ==================== 7-DAY WEEK STRIP RENDERER ====================
     function getMondayOfWeek(dateStr) {
       const d = parseLocalDate(dateStr);
-      const day = d.getDay(); // 0 (CN) -> 6 (T7)
-      const diff = (day === 0 ? -6 : 1) - day; // Monday is 1
+      const day = d.getDay();
+      const diff = (day === 0 ? -6 : 1) - day;
       d.setDate(d.getDate() + diff);
       return d;
     }
@@ -1109,15 +1256,23 @@
     function getDayProgressStatus(dateStr) {
       const history = getHistory();
       const rec = history[dateStr];
-      if (!rec || !rec.checked) return 'none';
+      if (!rec) return 'none';
       const mode = rec.mode || 'standard';
-      const tasks = getTasksForDate(dateStr, mode);
+      const baseTasks = getTasksForDate(dateStr, mode);
+      const customTasks = rec.customTasks || [];
+
       let done = 0;
-      tasks.forEach((_, idx) => {
-        if (rec.checked[`${mode}_${idx}`]) done++;
+      const total = baseTasks.length + customTasks.length;
+
+      baseTasks.forEach((_, idx) => {
+        if (rec.checked && rec.checked[`${mode}_${idx}`]) done++;
       });
+      customTasks.forEach(ct => {
+        if (ct.done) done++;
+      });
+
       if (done === 0) return 'none';
-      if (done >= tasks.length) return 'full';
+      if (done >= total) return 'full';
       return 'partial';
     }
 
@@ -1190,10 +1345,14 @@
       document.getElementById('mode-display-name').style.color = mode === 'standard' ? 'var(--accent-water)' : 'var(--accent-clover-light)';
 
       const tasks = getTasksForDate(viewedDateKey, mode);
+      const customTasks = dayData.customTasks || [];
       const container = document.getElementById('tasks-container');
       container.innerHTML = '';
 
       let doneCount = 0;
+      const totalTasksCount = tasks.length + customTasks.length;
+
+      // Render Default Tasks
       tasks.forEach((t, idx) => {
         const key = `${mode}_${idx}`;
         const isDone = Boolean(dayData.checked && dayData.checked[key]);
@@ -1227,8 +1386,33 @@
         container.appendChild(row);
       });
 
-      const pct = Math.round((doneCount / tasks.length) * 100);
-      document.getElementById('progress-percent-text').textContent = `${doneCount} / ${tasks.length} (${pct}%)`;
+      // Render Custom Added Tasks for this day
+      customTasks.forEach(ct => {
+        if (ct.done) doneCount++;
+        const row = document.createElement('div');
+        row.className = `task-item is-custom-task ${ct.done ? 'completed' : ''}`;
+        row.onclick = () => toggleCustomTask(ct.id);
+
+        row.innerHTML = `
+          <div class="checkbox-custom">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <div class="task-info">
+            <div class="task-meta">
+              <span class="task-time">${ct.time}</span>
+              <span class="task-category">🍀 Việc Thêm Riêng</span>
+            </div>
+            <div class="task-title">${ct.title}</div>
+          </div>
+          <button class="delete-custom-btn" onclick="deleteCustomTask('${ct.id}', event)" title="Xoá việc này">✕</button>
+        `;
+        container.appendChild(row);
+      });
+
+      const pct = totalTasksCount > 0 ? Math.round((doneCount / totalTasksCount) * 100) : 0;
+      document.getElementById('progress-percent-text').textContent = `${doneCount} / ${totalTasksCount} (${pct}%)`;
       document.getElementById('progress-fill').style.width = `${pct}%`;
 
       if (!skipVocabFocus) {
@@ -1280,7 +1464,12 @@
       let streak = 0;
       let cursor = parseLocalDate(todayDateKey);
       const todayRec = history[todayDateKey];
-      const doneToday = Boolean(todayRec && todayRec.checked && Object.values(todayRec.checked).some(Boolean));
+      const doneToday = Boolean(
+        todayRec && (
+          (todayRec.checked && Object.values(todayRec.checked).some(Boolean)) ||
+          (todayRec.customTasks && todayRec.customTasks.some(ct => ct.done))
+        )
+      );
 
       if (!doneToday) {
         cursor.setDate(cursor.getDate() - 1);
@@ -1288,7 +1477,13 @@
       while (true) {
         const k = formatLocalDate(cursor);
         const rec = history[k];
-        if (rec && rec.checked && Object.values(rec.checked).some(Boolean)) {
+        const hasDone = Boolean(
+          rec && (
+            (rec.checked && Object.values(rec.checked).some(Boolean)) ||
+            (rec.customTasks && rec.customTasks.some(ct => ct.done))
+          )
+        );
+        if (hasDone) {
           streak++;
           cursor.setDate(cursor.getDate() - 1);
         } else {
@@ -1302,11 +1497,15 @@
       const dayData = getDayData(viewedDateKey);
       const mode = dayData.mode || 'standard';
       const tasks = getTasksForDate(viewedDateKey, mode);
+      const customTasks = dayData.customTasks || [];
 
       let md = `### 🍀 Nhật Ký Kỷ Luật (${viewedDateKey})\n`;
       tasks.forEach((t, i) => {
         const isDone = Boolean(dayData.checked && dayData.checked[`${mode}_${i}`]);
         md += `- [${isDone ? 'x' : ' '}] **${t.time}**: ${t.title}\n`;
+      });
+      customTasks.forEach(ct => {
+        md += `- [${ct.done ? 'x' : ' '}] **${ct.time}** *(Việc riêng)*: ${ct.title}\n`;
       });
 
       const vocabs = (dayData.vocab || []).filter(v => v.en.trim() || v.vi.trim());
@@ -1357,7 +1556,6 @@
     }
 
     function initLiveSync() {
-      // 1. Poll recent state
       fetch(`${LIVE_URL}/json?poll=1`)
         .then(r => r.text())
         .then(txt => {
@@ -1371,7 +1569,6 @@
         })
         .catch(() => {});
 
-      // 2. Real-time SSE listener
       try {
         const es = new EventSource(LIVE_SSE);
         es.onmessage = (e) => {
