@@ -30,6 +30,7 @@
       --bg-dark: #070e17;
       --card-bg: rgba(13, 25, 39, 0.84);
       --card-border: rgba(148, 163, 184, 0.14);
+      --input-bg: rgba(7, 14, 23, 0.85);
       --accent-water: #38bdf8;
       --accent-water-glow: rgba(56, 189, 248, 0.22);
       --accent-clover: #10b981;
@@ -39,6 +40,28 @@
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --text-dim: #64748b;
+      --item-bg: rgba(255, 255, 255, 0.025);
+      --item-border: rgba(255, 255, 255, 0.04);
+      --shadow-header: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    [data-theme="light"] {
+      --bg-dark: #f1f5f9;
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --card-border: rgba(203, 213, 225, 0.85);
+      --input-bg: #ffffff;
+      --accent-water: #0284c7;
+      --accent-water-glow: rgba(2, 132, 199, 0.18);
+      --accent-clover: #059669;
+      --accent-clover-light: #10b981;
+      --accent-clover-glow: rgba(5, 150, 105, 0.18);
+      --accent-silver: #334155;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --item-bg: rgba(241, 245, 249, 0.7);
+      --item-border: rgba(203, 213, 225, 0.6);
+      --shadow-header: 0 4px 20px rgba(148, 163, 184, 0.2);
     }
 
     * {
@@ -60,6 +83,14 @@
         radial-gradient(at 50% 100%, rgba(226, 232, 240, 0.07) 0px, transparent 50%);
       color: var(--text-main);
       min-height: 100vh;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    [data-theme="light"] body {
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.12) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.10) 0px, transparent 55%),
+        radial-gradient(at 50% 100%, rgba(203, 213, 225, 0.2) 0px, transparent 50%);
     }
 
     body {
@@ -166,6 +197,33 @@
       display: flex;
       align-items: center;
       gap: 4px;
+    }
+
+    [data-theme="light"] .badge-streak {
+      color: #065f46;
+      background: rgba(16, 185, 129, 0.15);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+
+    .badge-theme {
+      background: var(--item-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 5px 11px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+    }
+
+    .badge-theme:hover {
+      border-color: var(--accent-water);
+      background: rgba(56, 189, 248, 0.1);
     }
 
     /* Compact 7-Day Week Strip */
@@ -560,7 +618,7 @@
       display: flex;
       align-items: center;
       gap: 5px;
-      background: rgba(7, 14, 23, 0.85);
+      background: var(--input-bg);
       border: 1px solid rgba(56, 189, 248, 0.35);
       border-radius: 8px;
       padding: 5px 9px;
@@ -577,22 +635,21 @@
       border: none;
       font-size: 16px;
       font-weight: 700;
-      color: #fff;
+      color: var(--text-main);
       font-family: 'JetBrains Mono', monospace;
       outline: none;
-      color-scheme: dark;
       cursor: pointer;
     }
 
     .add-task-title-input {
       flex: 1;
       min-width: 160px;
-      background: rgba(7, 14, 23, 0.85);
+      background: var(--input-bg);
       border: 1px solid rgba(148, 163, 184, 0.25);
       border-radius: 8px;
       padding: 8px 12px;
       font-size: 16px;
-      color: #fff;
+      color: var(--text-main);
       outline: none;
     }
 
@@ -612,11 +669,16 @@
       white-space: nowrap;
     }
 
+    [data-theme="light"] .add-task-submit-btn {
+      color: #ffffff;
+      background: linear-gradient(135deg, #059669, #0284c7);
+    }
+
     .important-toggle-btn {
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(7, 14, 23, 0.85);
+      background: var(--input-bg);
       border: 1px solid rgba(148, 163, 184, 0.25);
       color: var(--text-muted);
       font-size: 11.5px;
@@ -795,72 +857,198 @@
       border-color: rgba(239, 68, 68, 0.3);
     }
 
-    /* English 3-Words Vault */
-    .vocab-grid {
+    /* Apple-Style Persistent Reminders ("Lời nhắc") */
+    .reminders-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      margin-top: 2px;
+      gap: 12px;
       width: 100%;
     }
 
-    .vocab-row {
+    .reminders-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--card-border);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .reminders-title-wrap {
       display: flex;
       align-items: center;
       gap: 8px;
-      width: 100%;
-      background: rgba(255, 255, 255, 0.025);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 12px;
-      padding: 8px 10px;
     }
 
-    .vocab-num {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
+    .reminders-title {
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--accent-water);
+      letter-spacing: -0.3px;
+    }
+
+    .reminders-badge {
+      background: rgba(56, 189, 248, 0.14);
+      color: var(--accent-water);
+      font-size: 11px;
       font-weight: 700;
-      color: var(--accent-clover-light);
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .reminder-add-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 4px 6px 4px 14px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .reminder-add-bar:focus-within {
+      border-color: var(--accent-water);
+      box-shadow: 0 0 0 2px var(--accent-water-glow);
+    }
+
+    .reminder-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: var(--text-main);
+      padding: 8px 0;
+    }
+
+    .reminder-input::placeholder {
+      color: var(--text-dim);
+      font-size: 13.5px;
+    }
+
+    .reminder-add-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-water);
+      border: none;
+      color: #070e17;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    [data-theme="light"] .reminder-add-btn {
+      color: #ffffff;
+    }
+
+    .reminder-add-btn:active {
+      transform: scale(0.9);
+    }
+
+    .reminders-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .reminder-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--item-bg);
+      border: 1px solid var(--item-border);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .reminder-item:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .reminder-radio {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #64748b;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
-    .vocab-inputs-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      flex: 1;
-      min-width: 0;
-      width: 100%;
-    }
-
-    .vocab-input {
-      width: 100%;
-      min-width: 0;
-      background: rgba(7, 14, 23, 0.65);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 8px;
-      padding: 8px 10px;
-      font-size: 16px;
-      color: #fff;
-      outline: none;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .vocab-input::placeholder {
-      color: var(--text-dim);
-      font-size: 13px;
-    }
-
-    .vocab-input:focus {
+    .reminder-item.completed .reminder-radio {
+      background: var(--accent-water);
       border-color: var(--accent-water);
-      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.18);
+    }
+
+    .reminder-radio svg {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .reminder-item.completed .reminder-radio svg {
+      opacity: 1;
+    }
+
+    .reminder-text {
+      flex: 1;
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text-main);
+      word-break: break-word;
+      line-height: 1.4;
+      transition: color 0.2s ease;
+    }
+
+    .reminder-item.completed .reminder-text {
+      text-decoration: line-through;
+      color: var(--text-dim);
+    }
+
+    .reminder-del-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+      opacity: 0.6;
+      transition: opacity 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .reminder-del-btn:hover {
+      opacity: 1;
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .reminders-empty {
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--text-dim);
+      padding: 14px;
     }
 
     /* Auth Modal */
@@ -1003,6 +1191,9 @@
         <div class="badge-streak">
           🍀 Chuỗi: <span id="streak-count">0</span> ngày
         </div>
+        <button class="badge-theme" id="theme-btn" onclick="toggleTheme()" title="Chuyển chế độ Sáng / Tối">
+          <span id="theme-icon">🌙</span> <span id="theme-text">Tối</span>
+        </button>
       </div>
     </header>
 
@@ -1094,16 +1285,29 @@
       </div>
     </div>
 
-    <!-- 3 English Words Mini Input -->
-    <div class="card-box">
-      <div class="card-header">
-        <div class="card-title">
-          <span>🇬🇧</span> 3 Từ Tiếng Anh Thực Chiến (Nhặt từ Video Edit)
+    <!-- Apple-Style Persistent Reminders ("Lời nhắc" iOS) -->
+    <div class="reminders-card">
+      <div class="reminders-header">
+        <div class="reminders-title-wrap">
+          <span class="reminders-title">Lời nhắc</span>
+          <span class="reminders-badge" id="reminders-badge">0</span>
         </div>
-        <span style="font-size: 11px; color: var(--accent-clover-light);">☁️ Tự động lưu</span>
+        <div class="header-actions-group">
+          <button class="action-btn" onclick="clearCompletedReminders()" title="Dọn dẹp các việc đã tick xong">
+            🧹 Dọn việc xong
+          </button>
+        </div>
       </div>
-      <div class="vocab-grid" id="vocab-container">
-        <!-- 3 rows injected by JS -->
+
+      <!-- Quick Add Reminder Input Bar -->
+      <div class="reminder-add-bar">
+        <input type="text" id="reminder-input" class="reminder-input" placeholder="Thêm lời nhắc mới (VD: Giặt chăn ga gối...)" onkeydown="if(event.key==='Enter') addReminder()">
+        <button class="reminder-add-btn" id="add-reminder-btn" onclick="addReminder()" title="Thêm lời nhắc">＋</button>
+      </div>
+
+      <!-- Reminders List -->
+      <div class="reminders-list" id="reminders-container">
+        <!-- Rendered by JS -->
       </div>
     </div>
 
@@ -1157,18 +1361,172 @@
 
     const FIXED_USER_EMAIL = "diembd.dev@gmail.com";
     const STORAGE_KEY = "diem_daily_flow_v1";
+    const REMINDERS_KEY = "diem_reminders_v1";
+    const THEME_KEY = "diem_theme_v1";
+    const FIREBASE_REST_BASE = "https://diem-habits-default-rtdb.asia-southeast1.firebasedatabase.app/diem_daily_flow/history";
+    const FIREBASE_REMINDERS_REST = "https://diem-habits-default-rtdb.asia-southeast1.firebasedatabase.app/diem_daily_flow/reminders.json";
 
     let db = null;
     let diemRef = null;
+    let diemRemindersRef = null;
     let isFirebaseInit = false;
 
     try {
       firebase.initializeApp(firebaseConfig);
       db = firebase.database();
       diemRef = db.ref('diem_daily_flow/history');
+      diemRemindersRef = db.ref('diem_daily_flow/reminders');
       isFirebaseInit = true;
     } catch (e) {
       console.warn("Firebase notice:", e);
+    }
+
+    // ==================== THEME CONTROLLER (SÁNG / TỐI) ====================
+    function initTheme() {
+      const saved = localStorage.getItem(THEME_KEY) || 'dark';
+      setTheme(saved);
+    }
+
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      document.body.setAttribute('data-theme', theme);
+      localStorage.setItem(THEME_KEY, theme);
+      const icon = document.getElementById('theme-icon');
+      const text = document.getElementById('theme-text');
+      if (icon && text) {
+        icon.textContent = theme === 'light' ? '☀️' : '🌙';
+        text.textContent = theme === 'light' ? 'Sáng' : 'Tối';
+      }
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', theme === 'light' ? '#f1f5f9' : '#070e17');
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      setTheme(current === 'light' ? 'dark' : 'light');
+    }
+
+    // ==================== PERSISTENT REMINDERS (LỜI NHẮC - APPLE STYLE) ====================
+    const DEFAULT_REMINDERS = [
+      { id: 'rem_1', text: 'Giặt chăn ga gối', done: false, createdAt: Date.now() - 4000 },
+      { id: 'rem_2', text: 'Nhắc chị Vân tích hợp sổ y tế Vnid cho má', done: false, createdAt: Date.now() - 3000 },
+      { id: 'rem_3', text: 'Tối ưu tại daily flow để viết được nhắc nhở', done: false, createdAt: Date.now() - 2000 },
+      { id: 'rem_4', text: 'Đi khâu lại cặp', done: false, createdAt: Date.now() - 1000 }
+    ];
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
+    }
+
+    function getReminders() {
+      try {
+        const raw = localStorage.getItem(REMINDERS_KEY);
+        if (!raw) {
+          saveReminders(DEFAULT_REMINDERS, false);
+          return DEFAULT_REMINDERS;
+        }
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : DEFAULT_REMINDERS;
+      } catch (e) {
+        return DEFAULT_REMINDERS;
+      }
+    }
+
+    function saveReminders(list, broadcast = true) {
+      try {
+        localStorage.setItem(REMINDERS_KEY, JSON.stringify(list));
+      } catch (e) {}
+
+      if (broadcast) {
+        broadcastLiveSync(viewedDateKey, getDayData(viewedDateKey));
+        fetch(FIREBASE_REMINDERS_REST, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(list)
+        }).catch(() => {});
+        if (isFirebaseInit && diemRemindersRef) {
+          diemRemindersRef.set(list).catch(() => {});
+        }
+      }
+      renderReminders();
+    }
+
+    function renderReminders() {
+      const container = document.getElementById('reminders-container');
+      const badge = document.getElementById('reminders-badge');
+      if (!container) return;
+
+      const list = getReminders();
+      const pending = list.filter(r => !r.done).length;
+      if (badge) badge.textContent = `${pending} việc`;
+
+      if (list.length === 0) {
+        container.innerHTML = '<div class="reminders-empty">Không có lời nhắc nào. Gõ vào ô trên để thêm nhé! 🍀</div>';
+        return;
+      }
+
+      container.innerHTML = '';
+      list.forEach(item => {
+        const el = document.createElement('div');
+        el.className = `reminder-item ${item.done ? 'completed' : ''}`;
+        el.onclick = () => toggleReminder(item.id);
+
+        el.innerHTML = `
+          <div class="reminder-radio">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <span class="reminder-text">${escapeHtml(item.text)}</span>
+          <button class="reminder-del-btn" onclick="deleteReminder('${item.id}', event)" title="Xoá lời nhắc">✕</button>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    function addReminder() {
+      const input = document.getElementById('reminder-input');
+      const text = (input ? input.value : '').trim();
+      if (!text) return;
+
+      const list = getReminders();
+      list.unshift({
+        id: 'rem_' + Date.now(),
+        text: text,
+        done: false,
+        createdAt: Date.now()
+      });
+      if (input) input.value = '';
+      saveReminders(list, true);
+      showToast(`📝 Đã thêm: "${text}"`);
+    }
+
+    function toggleReminder(id) {
+      const list = getReminders().map(r => {
+        if (r.id === id) return { ...r, done: !r.done };
+        return r;
+      });
+      saveReminders(list, true);
+    }
+
+    function deleteReminder(id, e) {
+      if (e) e.stopPropagation();
+      const list = getReminders().filter(r => r.id !== id);
+      saveReminders(list, true);
+      showToast("Đã xoá lời nhắc");
+    }
+
+    function clearCompletedReminders() {
+      const list = getReminders();
+      const remaining = list.filter(r => !r.done);
+      if (remaining.length === list.length) {
+        showToast("Chưa có lời nhắc nào hoàn thành để dọn dẹp");
+        return;
+      }
+      saveReminders(remaining, true);
+      showToast("🧹 Đã dọn dẹp các việc đã xong!");
     }
 
     // ==================== LỊCH HỌC IUH THEO THỨ TRONG TUẦN ====================
@@ -1326,6 +1684,7 @@
         dateKey: dateKey,
         dayData: dayObj,
         fullHistory: getHistory(),
+        reminders: getReminders(),
         ts: Date.now()
       };
       fetch(LIVE_URL, {
@@ -1715,31 +2074,7 @@
       document.getElementById('progress-percent-text').textContent = `${doneCount} / ${totalTasksCount} (${pct}%)`;
       document.getElementById('progress-fill').style.width = `${pct}%`;
 
-      if (!skipVocabFocus) {
-        const vocabContainer = document.getElementById('vocab-container');
-        vocabContainer.innerHTML = '';
-        (dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}]).forEach((v, i) => {
-          const vRow = document.createElement('div');
-          vRow.className = 'vocab-row';
-          vRow.innerHTML = `
-            <div class="vocab-num">#${i + 1}</div>
-            <div class="vocab-inputs-wrap">
-              <input type="text" class="vocab-input" placeholder="Từ Tiếng Anh (VD: Retention)..." value="${(v.en || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'en', this.value)">
-              <input type="text" class="vocab-input" placeholder="Nghĩa Tiếng Việt..." value="${(v.vi || '').replace(/"/g, '&quot;')}" oninput="handleVocabChange(${i}, 'vi', this.value)">
-            </div>
-          `;
-          vocabContainer.appendChild(vRow);
-        });
-      }
-
       updateStreak();
-    }
-
-    function handleVocabChange(idx, field, val) {
-      const dayData = getDayData(viewedDateKey);
-      const vocab = [...(dayData.vocab || [{en:'',vi:''},{en:'',vi:''},{en:'',vi:''}])];
-      vocab[idx] = { ...vocab[idx], [field]: val };
-      updateDayData(viewedDateKey, { vocab }, true);
     }
 
     function switchMode(mode) {
@@ -1808,11 +2143,11 @@
         md += `- [${ct.done ? 'x' : ' '}] **${ct.time}** *(Việc riêng)*: ${ct.title}\n`;
       });
 
-      const vocabs = (dayData.vocab || []).filter(v => v.en.trim() || v.vi.trim());
-      if (vocabs.length > 0) {
-        md += `\n**🇬🇧 Từ vựng Tiếng Anh hôm nay:**\n`;
-        vocabs.forEach(v => {
-          md += `- **${v.en}**: ${v.vi}\n`;
+      const reminders = getReminders();
+      if (reminders.length > 0) {
+        md += `\n### 📝 Lời Nhắc\n`;
+        reminders.forEach(r => {
+          md += `- [${r.done ? 'x' : ' '}] ${r.text}\n`;
         });
       }
 
@@ -1847,6 +2182,13 @@
       if (payload.dateKey && payload.dayData) {
         local[payload.dateKey] = payload.dayData;
         changed = true;
+      }
+
+      if (Array.isArray(payload.reminders)) {
+        try {
+          localStorage.setItem(REMINDERS_KEY, JSON.stringify(payload.reminders));
+          renderReminders();
+        } catch (e) {}
       }
 
       if (changed) {
@@ -1893,6 +2235,8 @@
 
     function forcePushAllToCloud() {
       const local = getHistory();
+      const reminders = getReminders();
+
       fetch(`${FIREBASE_REST_BASE}.json`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -1906,8 +2250,15 @@
           showToast("⚠️ Không thể kết nối Cloud lúc này");
         });
 
-      if (isFirebaseInit && diemRef) {
-        diemRef.update(local).catch(() => {});
+      fetch(FIREBASE_REMINDERS_REST, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reminders)
+      }).catch(() => {});
+
+      if (isFirebaseInit) {
+        if (diemRef) diemRef.update(local).catch(() => {});
+        if (diemRemindersRef) diemRemindersRef.set(reminders).catch(() => {});
       }
     }
 
@@ -1939,7 +2290,7 @@
       const text = document.getElementById('sync-text');
       if (text) text.textContent = '☁️ Cloud Riêng Bật';
 
-      // Push any existing local history via REST & pull latest from Diễm's Firebase
+      // 1. History Sync
       const initialLocal = getHistory();
       if (Object.keys(initialLocal).length > 0) {
         fetch(`${FIREBASE_REST_BASE}.json`, {
@@ -1959,8 +2310,42 @@
           mergeCloudHistory(snap.val() || {});
         });
       }
+
+      // 2. Reminders Sync
+      fetch(FIREBASE_REMINDERS_REST)
+        .then(r => r.json())
+        .then(cloudReminders => {
+          if (Array.isArray(cloudReminders) && cloudReminders.length > 0) {
+            try {
+              localStorage.setItem(REMINDERS_KEY, JSON.stringify(cloudReminders));
+              renderReminders();
+            } catch (e) {}
+          } else {
+            const currentReminders = getReminders();
+            fetch(FIREBASE_REMINDERS_REST, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(currentReminders)
+            }).catch(() => {});
+          }
+        })
+        .catch(() => {});
+
+      if (isFirebaseInit && diemRemindersRef) {
+        diemRemindersRef.on('value', snap => {
+          const val = snap.val();
+          if (Array.isArray(val)) {
+            try {
+              localStorage.setItem(REMINDERS_KEY, JSON.stringify(val));
+              renderReminders();
+            } catch (e) {}
+          }
+        });
+      }
     }
 
+    initTheme();
+    renderReminders();
     initDedicatedFirebaseSync();
     initLiveSync();
     renderAll();
