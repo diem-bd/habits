@@ -271,7 +271,7 @@
     .current-date-text {
       font-weight: 700;
       font-size: 13px;
-      color: #fff;
+      color: var(--text-main);
     }
 
     .week-strip {
@@ -490,7 +490,7 @@
     .mode-name {
       font-size: 14px;
       font-weight: 700;
-      color: #fff;
+      color: var(--text-main);
     }
 
     .mode-desc {
@@ -1150,20 +1150,417 @@
       opacity: 1;
     }
 
+    /* ==========================================================================
+       CHẾ ĐỘ SÁNG CAO CẤP (APPLE LIGHT MODE - ĐẬM ĐÀ, RÕ NÉT, TƯƠNG PHẢN CAO)
+       ========================================================================== */
+    [data-theme="light"] body {
+      background-color: #f1f5f9;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(2, 132, 199, 0.12) 0px, transparent 55%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.10) 0px, transparent 55%),
+        radial-gradient(at 50% 100%, rgba(203, 213, 225, 0.25) 0px, transparent 50%);
+    }
+
+    [data-theme="light"] .header {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    [data-theme="light"] .header-title h1 {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #059669 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .header-title p {
+      color: #64748b;
+    }
+
+    [data-theme="light"] .badge-roadmap {
+      background: rgba(2, 132, 199, 0.09);
+      border-color: rgba(2, 132, 199, 0.3);
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .badge-sync {
+      background: rgba(5, 150, 105, 0.09);
+      border-color: rgba(5, 150, 105, 0.3);
+      color: #059669;
+    }
+
+    [data-theme="light"] .badge-streak {
+      background: rgba(5, 150, 105, 0.1);
+      border-color: rgba(5, 150, 105, 0.35);
+      color: #047857;
+    }
+
+    [data-theme="light"] .badge-theme {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .badge-theme:hover {
+      background: #f1f5f9;
+      border-color: #0284c7;
+    }
+
+    /* Week Card & Navigation */
+    [data-theme="light"] .week-card {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    [data-theme="light"] .nav-btn {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+      color: #334155;
+    }
+
+    [data-theme="light"] .nav-btn:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .nav-btn.jump-today {
+      background: rgba(2, 132, 199, 0.1);
+      border-color: rgba(2, 132, 199, 0.3);
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .day-pill {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .day-name {
+      color: #64748b;
+    }
+
+    [data-theme="light"] .day-num {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .day-status-icon {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+
+    [data-theme="light"] .day-pill.is-today .day-name {
+      color: #0284c7;
+      font-weight: 800;
+    }
+
+    [data-theme="light"] .day-pill.is-selected {
+      background: rgba(2, 132, 199, 0.1);
+      border-color: #0284c7;
+      box-shadow: 0 0 12px rgba(2, 132, 199, 0.18);
+    }
+
+    [data-theme="light"] .day-pill.is-selected .day-num {
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .day-pill.streak-partial {
+      background: rgba(2, 132, 199, 0.07);
+      border-color: rgba(2, 132, 199, 0.35);
+    }
+
+    [data-theme="light"] .day-pill.streak-partial .day-status-icon {
+      background: rgba(2, 132, 199, 0.18);
+      color: #0284c7;
+      font-weight: 800;
+    }
+
+    [data-theme="light"] .day-pill.streak-full {
+      background: rgba(5, 150, 105, 0.08);
+      border-color: rgba(5, 150, 105, 0.4);
+    }
+
+    [data-theme="light"] .day-pill.streak-full .day-status-icon {
+      background: rgba(5, 150, 105, 0.18);
+      color: #059669;
+    }
+
+    [data-theme="light"] .day-pill.has-important {
+      border-color: #f59e0b;
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, #ffffff 100%);
+    }
+
+    [data-theme="light"] .week-event-chip {
+      background: #fef3c7;
+      border-color: #fcd34d;
+      color: #92400e;
+    }
+
+    [data-theme="light"] .week-event-chip .chip-countdown {
+      color: #b45309;
+      background: rgba(245, 158, 11, 0.22);
+    }
+
+    [data-theme="light"] .schedule-evening {
+      background: rgba(2, 132, 199, 0.08);
+      border-color: rgba(2, 132, 199, 0.28);
+      color: #0369a1;
+    }
+
+    [data-theme="light"] .schedule-free {
+      background: rgba(5, 150, 105, 0.08);
+      border-color: rgba(5, 150, 105, 0.3);
+      color: #047857;
+    }
+
+    [data-theme="light"] .schedule-weekend {
+      background: rgba(100, 116, 139, 0.08);
+      border-color: rgba(100, 116, 139, 0.25);
+      color: #334155;
+    }
+
+    /* 2-Mode Selector */
+    [data-theme="light"] .mode-btn {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+
+    [data-theme="light"] .mode-name {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .mode-desc {
+      color: #475569;
+    }
+
+    [data-theme="light"] .mode-btn.active-standard {
+      background: rgba(2, 132, 199, 0.06);
+      border-color: #0284c7;
+      box-shadow: 0 0 16px rgba(2, 132, 199, 0.12);
+    }
+
+    [data-theme="light"] .mode-btn.active-light {
+      background: rgba(5, 150, 105, 0.06);
+      border-color: #059669;
+      box-shadow: 0 0 16px rgba(5, 150, 105, 0.12);
+    }
+
+    [data-theme="light"] .progress-card {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+    }
+
+    [data-theme="light"] .bar-track {
+      background: #e2e8f0;
+    }
+
+    /* Checklist & Reminders Cards */
+    [data-theme="light"] .card-box,
+    [data-theme="light"] .reminders-card {
+      background: #ffffff;
+      border-color: rgba(203, 213, 225, 0.85);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    [data-theme="light"] .card-title {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .action-btn {
+      background: rgba(2, 132, 199, 0.08);
+      border-color: rgba(2, 132, 199, 0.28);
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .action-btn.btn-add-task {
+      background: rgba(5, 150, 105, 0.1);
+      border-color: rgba(5, 150, 105, 0.3);
+      color: #059669;
+    }
+
+    [data-theme="light"] .add-task-drawer {
+      background: rgba(5, 150, 105, 0.04);
+      border-color: rgba(5, 150, 105, 0.3);
+    }
+
+    [data-theme="light"] .time-picker-wrap {
+      background: #ffffff;
+      border-color: rgba(2, 132, 199, 0.35);
+    }
+
+    [data-theme="light"] .time-picker-label {
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .add-task-title-input {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .important-toggle-btn {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #64748b;
+    }
+
+    [data-theme="light"] .important-toggle-btn.active {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #b45309;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+
+    [data-theme="light"] .task-item {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .task-item:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    [data-theme="light"] .task-title {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .task-desc {
+      color: #475569;
+    }
+
+    [data-theme="light"] .task-time {
+      background: rgba(2, 132, 199, 0.1);
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .task-category {
+      color: #059669;
+    }
+
+    [data-theme="light"] .task-item.is-important-task {
+      border-left: 3px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.06);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    [data-theme="light"] .task-category.important-cat {
+      color: #d97706;
+    }
+
+    [data-theme="light"] .task-item.completed {
+      background: rgba(5, 150, 105, 0.05);
+      border-color: rgba(5, 150, 105, 0.3);
+    }
+
+    [data-theme="light"] .checkbox-custom {
+      background: #ffffff;
+      border-color: #94a3b8;
+    }
+
+    [data-theme="light"] .task-item.completed .checkbox-custom {
+      background: #059669;
+      border-color: #059669;
+    }
+
+    [data-theme="light"] .star-custom-btn {
+      color: #94a3b8;
+    }
+
+    [data-theme="light"] .star-custom-btn.active {
+      color: #d97706;
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.35);
+    }
+
+    [data-theme="light"] .delete-custom-btn {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #64748b;
+    }
+
+    [data-theme="light"] .delete-custom-btn:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    /* Reminders Light Mode */
+    [data-theme="light"] .reminders-title {
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .reminders-badge {
+      background: rgba(2, 132, 199, 0.12);
+      color: #0284c7;
+    }
+
+    [data-theme="light"] .reminder-add-bar {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    [data-theme="light"] .reminder-input {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .reminder-input::placeholder {
+      color: #94a3b8;
+    }
+
+    [data-theme="light"] .reminder-add-btn {
+      background: #0284c7;
+      color: #ffffff;
+    }
+
+    [data-theme="light"] .reminder-item {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
+    [data-theme="light"] .reminder-item:hover {
+      background: #f1f5f9;
+      border-color: rgba(2, 132, 199, 0.35);
+    }
+
+    [data-theme="light"] .reminder-radio {
+      background: #ffffff;
+      border-color: #94a3b8;
+    }
+
+    [data-theme="light"] .reminder-item.completed .reminder-radio {
+      background: #0284c7;
+      border-color: #0284c7;
+    }
+
+    [data-theme="light"] .reminder-text {
+      color: #0f172a;
+    }
+
+    [data-theme="light"] .reminder-item.completed .reminder-text {
+      color: #94a3b8;
+    }
+
+    [data-theme="light"] .reminder-del-btn {
+      color: #94a3b8;
+    }
+
+    [data-theme="light"] .modal-card {
+      background: #ffffff;
+      border-color: #cbd5e1;
+      color: #0f172a;
+      box-shadow: 0 10px 40px rgba(15, 23, 42, 0.15);
+    }
+
+    [data-theme="light"] .fixed-account-card {
+      background: #f8fafc;
+      border-color: #e2e8f0;
+    }
+
     @media (max-width: 600px) {
       .mode-selector {
         grid-template-columns: 1fr;
-      }
-      .vocab-row {
-        align-items: flex-start;
-        padding: 10px;
-      }
-      .vocab-num {
-        margin-top: 4px;
-      }
-      .vocab-inputs-wrap {
-        grid-template-columns: 1fr;
-        gap: 6px;
       }
       .schedule-pill {
         width: 100%;
