@@ -2587,7 +2587,18 @@
       }
     }
 
-    function initLiveSync() {
+    // ==================== AUTO BIDIRECTIONAL FIREBASE & LIVE SYNC ====================
+    let liveEventSource = null;
+    let isSyncing = false;
+
+    function setSyncStatus(text, dotColor = 'var(--accent-clover-light)') {
+      const syncText = document.getElementById('sync-text');
+      const syncDot = document.querySelector('.sync-dot');
+      if (syncText) syncText.textContent = text;
+      if (syncDot) syncDot.style.background = dotColor;
+    }
+
+    function pollLiveSync() {
       fetch(`${LIVE_URL}/json?poll=1`)
         .then(r => r.text())
         .then(txt => {
@@ -2600,10 +2611,18 @@
           });
         })
         .catch(() => {});
+    }
+
+    function initLiveSync() {
+      pollLiveSync();
 
       try {
-        const es = new EventSource(LIVE_SSE);
-        es.onmessage = (e) => {
+        if (liveEventSource) {
+          liveEventSource.close();
+          liveEventSource = null;
+        }
+        liveEventSource = new EventSource(LIVE_SSE);
+        liveEventSource.onmessage = (e) => {
           try {
             const ev = JSON.parse(e.data);
             if (ev.event === 'message' && ev.message) {
@@ -2611,10 +2630,141 @@
             }
           } catch (err) {}
         };
+        liveEventSource.onerror = () => {
+          if (liveEventSource) {
+            liveEventSource.close();
+            liveEventSource = null;
+          }
+        };
       } catch (e) {}
     }
 
-    // ==================== CLOUD MODAL & AUTO FIREBASE SYNC ====================
+    // Smart Bidirectional Sync: PULL first, compare timestamps, merge, then push only what is newer
+    function syncCloudBidirectional(isManual = false) {
+      if (isSyncing) return;
+      isSyncing = true;
+      if (isManual) setSyncStatus('🔄 Đang đồng bộ...', '#38bdf8');
+
+      const localHistory = getHistory();
+      const localReminders = getReminders();
+
+      // Parallel fetch History and Reminders from Firebase REST
+      Promise.all([
+        fetch(`${FIREBASE_REST_BASE}.json`).then(r => r.json()).catch(() => null),
+        fetch(FIREBASE_REMINDERS_REST).then(r => r.json()).catch(() => null)
+      ]).then(([cloudHistory, cloudReminders]) => {
+        let historyChanged = false;
+        const daysToPush = {};
+
+        // 1. SMART MERGE HISTORY
+        if (cloudHistory && typeof cloudHistory === 'object') {
+          const allKeys = new Set([...Object.keys(localHistory), ...Object.keys(cloudHistory)]);
+          allKeys.forEach(k => {
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+            const localDay = localHistory[k];
+            const cloudDay = cloudHistory[k];
+
+            if (!localDay && cloudDay && typeof cloudDay === 'object') {
+              localHistory[k] = cloudDay;
+              historyChanged = true;
+            } else if (localDay && !cloudDay) {
+              daysToPush[k] = localDay;
+            } else if (localDay && cloudDay && typeof cloudDay === 'object') {
+              const localTime = Number(localDay.updatedAt || 0);
+              const cloudTime = Number(cloudDay.updatedAt || 0);
+
+              if (cloudTime > localTime) {
+                localHistory[k] = cloudDay;
+                historyChanged = true;
+              } else if (localTime > cloudTime) {
+                daysToPush[k] = localDay;
+              }
+            }
+          });
+        } else if (Object.keys(localHistory).length > 0) {
+          // Cloud empty: push all local days
+          Object.assign(daysToPush, localHistory);
+        }
+
+        if (historyChanged) {
+          saveHistory(localHistory);
+          renderAll(true);
+        }
+
+        // Push any local days that are strictly newer to Cloud
+        if (Object.keys(daysToPush).length > 0) {
+          fetch(`${FIREBASE_REST_BASE}.json`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(daysToPush)
+          }).catch(() => {});
+          if (isFirebaseInit && diemRef) {
+            diemRef.update(daysToPush).catch(() => {});
+          }
+        }
+
+        // 2. SMART MERGE REMINDERS
+        if (Array.isArray(cloudReminders)) {
+          const mergedRemindersMap = new Map();
+          // Add local items
+          localReminders.forEach(item => {
+            if (item && item.id) mergedRemindersMap.set(item.id, item);
+          });
+          // Merge cloud items (cloud items win if different or missing locally)
+          cloudReminders.forEach(item => {
+            if (item && item.id) {
+              const localItem = mergedRemindersMap.get(item.id);
+              if (!localItem) {
+                mergedRemindersMap.set(item.id, item);
+              } else {
+                // If cloud has different done state, trust the cloud
+                if (Boolean(item.done) !== Boolean(localItem.done)) {
+                  mergedRemindersMap.set(item.id, item);
+                }
+              }
+            }
+          });
+
+          const finalReminders = Array.from(mergedRemindersMap.values());
+          const hasRemindersDiff = JSON.stringify(finalReminders) !== JSON.stringify(localReminders);
+
+          if (hasRemindersDiff) {
+            try {
+              localStorage.setItem(REMINDERS_KEY, JSON.stringify(finalReminders));
+              renderReminders();
+            } catch (e) {}
+          }
+
+          // If local had unique items that cloud didn't have, update cloud with merged list
+          if (finalReminders.length > cloudReminders.length) {
+            fetch(FIREBASE_REMINDERS_REST, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(finalReminders)
+            }).catch(() => {});
+          }
+        } else if (localReminders.length > 0) {
+          // Push local reminders if cloud had none
+          fetch(FIREBASE_REMINDERS_REST, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(localReminders)
+          }).catch(() => {});
+        }
+
+        setSyncStatus('☁️ Tự động đồng bộ', 'var(--accent-clover-light)');
+        if (isManual) {
+          closeAuthModal();
+          showToast("🍀 Đã tự động đồng bộ 2 chiều với Cloud!");
+        }
+      }).catch(() => {
+        setSyncStatus('☁️ Cloud Riêng Bật', 'var(--accent-clover-light)');
+      }).finally(() => {
+        isSyncing = false;
+      });
+    }
+
+    // Modal Handlers
     function openAuthModal() {
       document.getElementById('auth-modal').className = 'modal-backdrop open';
     }
@@ -2624,114 +2774,63 @@
     }
 
     function forcePushAllToCloud() {
-      const local = getHistory();
-      const reminders = getReminders();
-
-      fetch(`${FIREBASE_REST_BASE}.json`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(local)
-      })
-        .then(() => {
-          closeAuthModal();
-          showToast("🍀 Đã đẩy toàn bộ lịch sử lên Firebase của Diễm!");
-        })
-        .catch(() => {
-          showToast("⚠️ Không thể kết nối Cloud lúc này");
-        });
-
-      fetch(FIREBASE_REMINDERS_REST, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reminders)
-      }).catch(() => {});
-
-      if (isFirebaseInit) {
-        if (diemRef) diemRef.update(local).catch(() => {});
-        if (diemRemindersRef) diemRemindersRef.set(reminders).catch(() => {});
-      }
-    }
-
-    function mergeCloudHistory(cloud) {
-      if (!cloud || typeof cloud !== 'object') return;
-      const local = getHistory();
-      let changed = false;
-
-      Object.keys(cloud).forEach(k => {
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
-        const remoteDay = cloud[k];
-        if (!remoteDay || typeof remoteDay !== 'object') return;
-        const localDay = local[k];
-        if (!localDay || (remoteDay.updatedAt || 0) >= (localDay.updatedAt || 0)) {
-          if (JSON.stringify(localDay) !== JSON.stringify(remoteDay)) {
-            local[k] = remoteDay;
-            changed = true;
-          }
-        }
-      });
-
-      if (changed) {
-        saveHistory(local);
-        renderAll(true);
-      }
+      syncCloudBidirectional(true);
     }
 
     function initDedicatedFirebaseSync() {
-      const text = document.getElementById('sync-text');
-      if (text) text.textContent = '☁️ Cloud Riêng Bật';
+      setSyncStatus('☁️ Tự động đồng bộ', 'var(--accent-clover-light)');
 
-      // 1. History Sync
-      const initialLocal = getHistory();
-      if (Object.keys(initialLocal).length > 0) {
-        fetch(`${FIREBASE_REST_BASE}.json`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(initialLocal)
-        }).catch(() => {});
-      }
+      // Initial bidirectional sync on startup
+      syncCloudBidirectional(false);
 
-      fetch(`${FIREBASE_REST_BASE}.json`)
-        .then(r => r.json())
-        .then(cloud => mergeCloudHistory(cloud))
-        .catch(() => {});
-
+      // Realtime listener via Firebase SDK if available
       if (isFirebaseInit && diemRef) {
         diemRef.on('value', snap => {
-          mergeCloudHistory(snap.val() || {});
+          const cloud = snap.val();
+          if (cloud && typeof cloud === 'object') {
+            const local = getHistory();
+            let changed = false;
+            Object.keys(cloud).forEach(k => {
+              if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+              const remoteDay = cloud[k];
+              const localDay = local[k];
+              if (!localDay || Number(remoteDay.updatedAt || 0) >= Number(localDay.updatedAt || 0)) {
+                if (JSON.stringify(localDay) !== JSON.stringify(remoteDay)) {
+                  local[k] = remoteDay;
+                  changed = true;
+                }
+              }
+            });
+            if (changed) {
+              saveHistory(local);
+              renderAll(true);
+            }
+          }
         });
       }
-
-      // 2. Reminders Sync
-      fetch(FIREBASE_REMINDERS_REST)
-        .then(r => r.json())
-        .then(cloudReminders => {
-          if (Array.isArray(cloudReminders) && cloudReminders.length > 0) {
-            try {
-              localStorage.setItem(REMINDERS_KEY, JSON.stringify(cloudReminders));
-              renderReminders();
-            } catch (e) {}
-          } else {
-            const currentReminders = getReminders();
-            fetch(FIREBASE_REMINDERS_REST, {
-              method: 'PUT',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(currentReminders)
-            }).catch(() => {});
-          }
-        })
-        .catch(() => {});
 
       if (isFirebaseInit && diemRemindersRef) {
         diemRemindersRef.on('value', snap => {
           const val = snap.val();
           if (Array.isArray(val)) {
-            try {
-              localStorage.setItem(REMINDERS_KEY, JSON.stringify(val));
-              renderReminders();
-            } catch (e) {}
+            const local = getReminders();
+            if (JSON.stringify(val) !== JSON.stringify(local)) {
+              try {
+                localStorage.setItem(REMINDERS_KEY, JSON.stringify(val));
+                renderReminders();
+              } catch (e) {}
+            }
           }
         });
       }
+    }
+
+    // Automatically trigger sync when user unlocks iPhone, focuses window, or switches tabs
+    function onAppForeground() {
+      checkDayRollover();
+      if (!liveEventSource) initLiveSync();
+      else pollLiveSync();
+      syncCloudBidirectional(false);
     }
 
     initTheme();
@@ -2739,11 +2838,16 @@
     initDedicatedFirebaseSync();
     initLiveSync();
     renderAll();
+
+    // 1. Midnight rollover check every 30s
     setInterval(checkDayRollover, 30000);
+    // 2. Seamless background auto-sync heartbeat every 10s
+    setInterval(() => syncCloudBidirectional(false), 10000);
+    // 3. Instant auto-sync on app wake-up / tab switch / screen unlock
     document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) checkDayRollover();
+      if (!document.hidden) onAppForeground();
     });
-    window.addEventListener('focus', checkDayRollover);
+    window.addEventListener('focus', onAppForeground);
   </script>
 </body>
 </html>
