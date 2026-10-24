@@ -353,6 +353,13 @@
       text-decoration: line-through;
     }
 
+    .week-event-chip.is-active-view {
+      border-color: var(--accent-water);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.35);
+      background: rgba(56, 189, 248, 0.16);
+      color: #ffffff;
+    }
+
     .week-event-chip .chip-countdown {
       font-size: 10px;
       font-weight: 700;
@@ -1293,6 +1300,13 @@
       background: #fef3c7;
       border-color: #fcd34d;
       color: #92400e;
+    }
+
+    [data-theme="light"] .week-event-chip.is-active-view {
+      border-color: #0284c7;
+      box-shadow: 0 0 10px rgba(2, 132, 199, 0.25);
+      background: rgba(2, 132, 199, 0.12);
+      color: #0369a1;
     }
 
     [data-theme="light"] .week-event-chip .chip-countdown {
@@ -2248,7 +2262,64 @@
       if (diffDays === 0) return 'Hôm nay';
       if (diffDays === 1) return 'Ngày mai';
       if (diffDays > 1) return `Còn ${diffDays} ngày`;
+      if (diffDays === -1) return 'Quá hạn 1 ngày';
+      if (diffDays < -1) return `Quá hạn ${Math.abs(diffDays)} ngày`;
       return 'Đã qua';
+    }
+
+    function getAllImportantEvents() {
+      const history = getHistory();
+      const allEvents = [];
+      const dayShortMap = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+      const todayStr = getBiologicalToday();
+
+      const viewedMonday = getMondayOfWeek(viewedDateKey);
+      const viewedSunday = new Date(viewedMonday);
+      viewedSunday.setDate(viewedSunday.getDate() + 6);
+      const viewedMondayStr = formatLocalDate(viewedMonday);
+      const viewedSundayStr = formatLocalDate(viewedSunday);
+
+      Object.keys(history).forEach(key => {
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
+        const rec = history[key];
+        if (!rec || !Array.isArray(rec.customTasks)) return;
+
+        const impTasks = rec.customTasks.filter(ct => ct && ct.important);
+        if (impTasks.length === 0) return;
+
+        const d = parseLocalDate(key);
+        const dayShort = dayShortMap[d.getDay()];
+        const dayNum = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+        impTasks.forEach(item => {
+          const isDone = Boolean(item.done);
+          const isFutureOrToday = (key >= todayStr);
+          const isInCurrentViewedWeek = (key >= viewedMondayStr && key <= viewedSundayStr);
+          const isOverdue = (key < todayStr && !isDone);
+
+          if (isFutureOrToday || isInCurrentViewedWeek || isOverdue) {
+            allEvents.push({
+              dateKey: key,
+              dayShort: dayShort,
+              dayNum: dayNum,
+              time: item.time || '08:00',
+              sortMinutes: parseTimeToMinutes(item.time || '08:00'),
+              title: item.title,
+              done: isDone
+            });
+          }
+        });
+      });
+
+      // Sort chronologically by dateKey, then time
+      allEvents.sort((a, b) => {
+        if (a.dateKey !== b.dateKey) {
+          return a.dateKey.localeCompare(b.dateKey);
+        }
+        return a.sortMinutes - b.sortMinutes;
+      });
+
+      return allEvents;
     }
 
     function renderWeekStrip() {
@@ -2263,7 +2334,6 @@
 
       const monday = getMondayOfWeek(viewedDateKey);
       const shortNames = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
-      const weekEvents = [];
 
       for (let i = 0; i < 7; i++) {
         const cur = new Date(monday);
@@ -2273,19 +2343,6 @@
         const isToday = (key === todayDateKey);
         const status = getDayProgressStatus(key);
         const impInfo = getDayImportantInfo(key);
-
-        if (impInfo.count > 0) {
-          impInfo.items.forEach(item => {
-            weekEvents.push({
-              dateKey: key,
-              dayShort: shortNames[i],
-              dayNum: `${String(cur.getDate()).padStart(2, '0')}/${String(cur.getMonth() + 1).padStart(2, '0')}`,
-              time: item.time,
-              title: item.title,
-              done: Boolean(item.done)
-            });
-          });
-        }
 
         let statusClass = '';
         let iconHtml = '·';
@@ -2317,18 +2374,21 @@
         stripEl.appendChild(pill);
       }
 
-      if (eventsBarEl && weekEvents.length > 0) {
+      const allImpEvents = getAllImportantEvents();
+
+      if (eventsBarEl && allImpEvents.length > 0) {
         eventsBarEl.classList.add('has-items');
-        weekEvents.forEach(ev => {
+        allImpEvents.forEach(ev => {
+          const isCurrentView = (ev.dateKey === viewedDateKey);
           const chip = document.createElement('div');
-          chip.className = `week-event-chip ${ev.done ? 'is-done' : ''}`;
+          chip.className = `week-event-chip ${ev.done ? 'is-done' : ''} ${isCurrentView ? 'is-active-view' : ''}`;
           chip.onclick = () => {
             viewedDateKey = ev.dateKey;
             renderAll();
           };
           const countdownText = ev.done ? '✓ Xong' : getCountdownLabel(ev.dateKey);
           chip.innerHTML = `
-            <span>⭐ <strong>${ev.dayShort} (${ev.dayNum})</strong> • ${ev.time}: ${ev.title}</span>
+            <span>⭐ <strong>${ev.dayShort} (${ev.dayNum})</strong> • ${ev.time}: ${escapeHtml(ev.title)}</span>
             <span class="chip-countdown">${countdownText}</span>
           `;
           eventsBarEl.appendChild(chip);
