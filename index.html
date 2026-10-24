@@ -319,9 +319,20 @@
 
     .week-events-bar {
       display: none;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding-top: 2px;
+      flex-wrap: nowrap;
+      gap: 7px;
+      padding: 3px 2px 5px 2px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    .week-events-bar::-webkit-scrollbar {
+      display: none;
     }
 
     .week-events-bar.has-items {
@@ -331,17 +342,22 @@
     .week-event-chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
-      background: rgba(251, 191, 36, 0.10);
-      border: 1px solid rgba(251, 191, 36, 0.35);
+      gap: 6px;
+      background: rgba(251, 191, 36, 0.09);
+      border: 1px solid rgba(251, 191, 36, 0.32);
       color: #fde68a;
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 600;
-      padding: 4px 9px;
-      border-radius: 8px;
+      padding: 5px 11px;
+      border-radius: 9px;
       cursor: pointer;
       transition: all 0.15s ease;
-      max-width: 100%;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    .week-event-chip:active {
+      transform: scale(0.97);
     }
 
     .week-event-chip:hover {
@@ -2273,12 +2289,6 @@
       const dayShortMap = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
       const todayStr = getBiologicalToday();
 
-      const viewedMonday = getMondayOfWeek(viewedDateKey);
-      const viewedSunday = new Date(viewedMonday);
-      viewedSunday.setDate(viewedSunday.getDate() + 6);
-      const viewedMondayStr = formatLocalDate(viewedMonday);
-      const viewedSundayStr = formatLocalDate(viewedSunday);
-
       Object.keys(history).forEach(key => {
         if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
         const rec = history[key];
@@ -2294,10 +2304,10 @@
         impTasks.forEach(item => {
           const isDone = Boolean(item.done);
           const isFutureOrToday = (key >= todayStr);
-          const isInCurrentViewedWeek = (key >= viewedMondayStr && key <= viewedSundayStr);
           const isOverdue = (key < todayStr && !isDone);
 
-          if (isFutureOrToday || isInCurrentViewedWeek || isOverdue) {
+          // Tự động ẩn việc đã tick xong để dải luôn tinh gọn, chỉ hiển thị việc chưa làm sắp tới hoặc quá hạn
+          if (!isDone && (isFutureOrToday || isOverdue)) {
             allEvents.push({
               dateKey: key,
               dayShort: dayShort,
